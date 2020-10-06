@@ -1,0 +1,29 @@
+body,html{
+  min-height: 100%;
+  height: auto;
+  margin: 0px;
+  padding: 0px;
+  background-image: url('../../images/background_isverify.svg');
+  background-size: cover;
+}
+
+.jumbotron{
+  background-color: white;
+}
+
+.title{
+  color:#003C5E;
+  font-size: 1.8vw;
+  font-weight: 600;
+}
+
+.beranda{
+  color:#999;
+  font-size: 1.6vw;
+  font-weight: 600
+}
+
+.beranda:hover{
+  color:#999;
+  text-decoration: none;
+}

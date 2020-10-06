@@ -1,0 +1,108 @@
+body,html{
+  min-height: 100%;
+  height: auto;
+  margin: 0px;
+  padding: 0px;
+}
+
+.welcome-string{
+  color: black;
+  font-weight: 600;
+  font-size:32px;
+}
+
+.login-string{
+  color: #999;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+a{
+  color: #2F94C3
+}
+
+a:hover{
+  color: #006095
+}
+
+.btn-primary{
+  background: #2F94C3;
+  border-color: #2F94C3
+}
+
+.btn-primary:hover{
+  background: #006095;
+  outline: #006095;
+  box-shadow: #006095;
+}
+
+.btn-primary:active:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+.btn-primary:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+
+.btn-primary:active{
+  background: #006095;
+  outline: #006095;
+}
+
+#mobile-version{
+  display:none
+}
+
+.app-name{
+  color:white;
+  font-weight: bold;
+  font-size: 1.4rem;
+  float: right;
+  margin-top: 3%
+}
+
+.app-desc{
+  color:white;
+  font-weight: normal;
+  font-size: 1rem;
+  float: right;
+  margin-right: 2%;
+  margin-left: 30%;
+  margin-top: 2%;
+  position: relative;
+  z-index: 999
+}
+
+#login-form{
+  width:100%;
+}
+
+#login-form-mobile{
+  width:100%;
+  margin-top: 5%
+}
+
+@media only screen and ((min-width: 768px) or (min-height: 760px)){
+
+  #desktop-version{
+    display:block
+  }
+
+  #mobile-version{
+    display:none
+  }
+}
+
+@media only screen and (min-width: 320px) and (max-width: 768px){
+
+  #desktop-version{
+    display:none
+  }
+
+  #mobile-version{
+    display:block
+  }
+}

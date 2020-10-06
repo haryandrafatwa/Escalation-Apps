@@ -1,0 +1,159 @@
+html,
+body {
+  min-height: 100%;
+  height: 100vh;
+  margin: 0px;
+  padding: 0px;
+  background-color: #F9F9F9;
+}
+
+.bg-light{
+  background: white!important;
+  border-radius: 0px 24px 24px 0px;
+  padding: calc(5% + 0.5vw);
+}
+
+.btn-primary{
+  background-color: #2F94C3;
+  color: white!important;
+  border: 1px solid #2F94C3;
+  border-radius: calc(1% + 0.5vw);
+  font-size: calc(35% + 0.5vw);
+}
+
+#form-btn{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.active{
+  color: #2F94C3!important;
+}
+
+.nav-item-link{
+  font-size: calc(35% + 0.5vw);
+  font-weight: 600;
+  width:100%;
+}
+
+.nav-item-profil{
+  font-size: calc(35% + 1vw);
+  font-weight: 600;
+  width:100%;
+}
+
+.nav-item-margin{
+    margin-left: calc(10% + 0.5vw);
+    margin-top: 5%;
+}
+
+.active-tag{
+  background:linear-gradient( #2F94C3, #2F94C3)!important;
+  background-size: 1.5% 70%!important;
+  background-repeat:no-repeat!important;
+  background-position: right!important;
+  margin-right: calc(1% + 0.5vw)!important;
+}
+
+.d-none{
+  margin-left: 7%;
+  color:#8A9499;
+}
+
+.avatar{
+  border-radius: calc(10% + 0.2vw);
+}
+
+.main-style{
+  margin-left: calc(1% + 1vw);
+  margin-right: calc(1% + 1vw);
+  width: auto;
+}
+
+.welcome-message{
+  font-size: calc(100% + 1vw);
+  font-weight: 600;
+}
+
+#ava-profil:hover{
+  cursor: pointer;
+}
+
+#dropdown-profil:hover{
+  cursor: pointer;
+}
+
+.search-layout{
+  background-color: white;
+  border-radius: 16px;
+}
+
+.input-group-text{
+  background: none!important;
+}
+
+.form-control {
+  border:none!important;
+  border-radius: 12px;
+  color:#999;
+}
+
+::placeholder{
+  color:#999!important;
+  font-weight: 600!important;
+}
+
+.header-text{
+  font-size: calc(30% + 1vw);
+  font-weight: 600;
+  color:#999;
+}
+
+.dropdown-item{
+  color:#999;
+}
+
+#dropdown-profil{
+  font-weight: 600;
+  color:#999
+}
+
+@media only screen and (min-width: 767.5px){
+  .profil-btn{
+    display: block!important;
+  }
+
+  .profil-toggler{
+    display: none;
+  }
+
+  #navbarSupportedContent{
+    display: none!important;
+  }
+
+  #navbarProfil{
+    display: none!important;
+  }
+}
+
+@media only screen and (min-width: 320px) and (max-width: 767.5px){
+
+  .profil-toggler{
+    display: block;
+  }
+
+  .ava-toggler{
+    display: block!important;
+  }
+
+  .ic-notif{
+    display: none;
+  }
+
+  .bg-light{
+    background: white!important;
+    border-radius: 0px;
+  }
+}
