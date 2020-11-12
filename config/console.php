@@ -28,13 +28,12 @@ $config = [
         'db' => $db,
     ],
     'params' => $params,
-    /*
     'controllerMap' => [
-        'fixture' => [ // Fixture generation command line.
-            'class' => 'yii\faker\FixtureController',
+        'socketio' => [ // Fixture generation command line.
+            'class' => \yiicod\socketio\commands\SocketIoCommand::class,
+            'server' => 'localhost:1367'
         ],
     ],
-    */
 ];
 
 if (YII_ENV_DEV) {

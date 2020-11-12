@@ -8,124 +8,50 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Url;
 use app\widgets\Alert;
+use kartik\date\DatePicker;
+use app\models\Role;
+use yii\helpers\ArrayHelper;
 
 $this->title = 'Escalation App | Daftar';
 ?>
 <div class="site-login">
-  <div class="container-fluid" id="desktop-version">
-    <div class="row">
-      <div class="col-6" style="background-color:#2F94C3;min-height:100vh">
-        <?= Html::img(Url::to('@web/images/image_register.svg'), ['alt' => 'My logo','style'=>'','class'=>'img-register']) ?>
-        <div class="container">
-            <div class="row">
-              <span class="app-name text-right">Escalation<span style="color:#FF6584;font-weight: normal;">Apps</span></span>
-            </div>
-            <div class="row">
-              <span class="motto-1">Decide faster</span>
-            </div>
-            <div class="row">
-              <span class="motto-2">so you can do more</span>
-            </div>
-            <div class="row">
-              <p id="app-desc" class="app-desc text-justify">Ambitioni dedisse scripsisse iudicaretur. Cras mattis iudicium purus sit amet fermentum. Donec sed odio operae, eu vulputate felis rhoncus. Praeterea iter est quasdam res quas ex communi. At nos hinc posthac, sitientis piros Afros. Petierunt uti sibi concilium totius Galliae in diem certam indicere. Cras mattis iudicium purus sit amet fermentum.</p>
-            </div>
-            <div class="row app-desc-btn" style="width:100%">
-              <?= Html::button('<i class="fas fa-play fa-lg" id="ic-btn" style="color:white"></i>', ['id'=>'btn-circle','class' => 'btn btn-circle btn-md','data-toggle'=>"modal",'data-target'=>"#exampleModalCenter", 'onclick'=>"showAppDesc()" ]) ?>
-              <span class="app-desc-text align-self-center btn" onclick="showAppDesc()" >Apa itu Escalation Apps?</span>
-            </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="row">
-          <div class="col-12 text-center mt-5">
-              <?= Html::img(Url::to('@web/images/logo.svg'), ['alt' => 'My logo','style'=>'width:40%;','class'=>'']) ?>
-          </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-8" style="margin-top:5%;">
+    <div class="container mt-5 mb-5">
+        <div class="col-12 d-flex justify-content-center align-items-center">
+            <div class="row justify-content-center">
+              <div class="jumbotron w-50 align-self-center m-0 pt-0 pb-0">
+                  <div class="container-fluid mt-4 mb-4">
+                      <div class="col-12">
+                          <div class="row justify-content-center ">
+                              <?= Html::img(Url::to('@web/images/logo.svg'), ['alt' => 'My logo','style'=>'width:50%;','class'=>'']) ?>
+                          </div>
+                          <div class="row justify-content-center mt-4">
+                              <h4 class="display-5"><b>Daftar Akun</b></h4>
+                          </div>
+                          <div class="row justify-content-center mt-0">
+                              <h5 class="display-5"><b>Pastikan Informasi yang akan diisi sesuai</b></h5>
+                          </div>
+                          <div class="row mt-4">
+                              <?php $role=new Role; $roles = $role->getRoles($user->identity->role); $listData=ArrayHelper::map($roles,'id','name'); $form = ActiveForm::begin(['id' => 'register-form','action' => ['site/register']]); ?>
 
-            <div class="row">
-              <div class="">
-                    <span class="welcome-string">Daftar</span>
-              </div>
-            </div>
-            <div class="row">
-                <span class="login-string">Selamat datang, silahkan daftar terlebih dahulu untuk menggunakan apps ini.</span>
-            </div>
-            <div class="row" style="margin-top:5%;">
-              <?php $form = ActiveForm::begin(['id' => 'register-form']); ?>
+                                  <?= $form->field($model, 'name')->textInput(['style'=>''])->label('Nama Lengkap') ?>
 
-                  <?= Alert::widget() ?>
+                                  <?= $form->field($model, 'nip')->textInput(['style'=>''])->label('NIP') ?>
 
-                  <?= $form->field($model, 'name')->textInput(['style'=>'position:relative;z-index:3;width:100%'])->label('Nama Lengkap') ?>
+                                  <?= $form->field($model, 'role')->dropDownList($listData,['prompt'=>['text' => 'Pilih role pegawai','options'=> ['disabled' => true, 'selected' => true]]]); ?>
 
-                  <?= $form->field($model, 'email')->textInput(['style'=>'position:relative;z-index:3;width:100%'])->label('Alamat Email') ?>
+                                  <?= $form->field($model, 'tgl_lahir')->widget(DatePicker::classname(),['options' => ['placeholder' => 'Start date'],'type' => DatePicker::TYPE_COMPONENT_PREPEND,'pluginOptions' => ['autoclose'=>true,'format' => 'dd/mm/yyyy','todayHightlight'=>true]])->label('Tanggal Lahir') ?>
 
-                  <?= $form->field($model, 'password')->passwordInput()->label('Kata Sandi') ?>
+                                  <div class="form-group col-12 m-0 p-0 d-flex" style="margin-top:5%">
+                                      <?= Html::a('Kembali',['site/pegawai'],['class' => 'mr-auto align-self-center']) ?>
+                                      <?= Html::submitButton('Daftar<i class="fas fa-long-arrow-alt-right" style="float:right;margin-top:6px"></i>', ['class' => 'btn btn-primary col-4', 'name' => 'register-button']) ?>
+                                  </div>
 
-                  <?= $form->field($model, 'repassword')->passwordInput()->label('Ulang Kata Sandi') ?>
-
-                  <div class="form-group" style="margin-top:5%">
-                      <?= Html::submitButton('Daftar<i class="fas fa-long-arrow-alt-right" style="float:right;margin-top:6px"></i>', ['class' => 'btn btn-primary col-12', 'name' => 'login-button']) ?>
+                              <?php ActiveForm::end(); ?>
+                          </div>
+                      </div>
                   </div>
-
-                  <div class="text-center" style="color:#999;margin:1em 0;margin-top:5%">
-                      Sudah memiliki akun? <?= Html::a('Masuk sekarang', ['site/index']) ?>.
-                  </div>
-
-              <?php ActiveForm::end(); ?>
+              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="container-fluid" id="mobile-version">
-    <div class="row">
-      <div class="col-12 d-flex align-items-center" style="height:100vh;">
-        <div class="">
-          <div class="row">
-            <div class="col-12 text-center mt-5">
-                <?= Html::img(Url::to('@web/images/logo.svg'), ['alt' => 'My logo','style'=>'width:50%;','class'=>'']) ?>
-            </div>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-10" style="margin-top:5%">
-              <div class="row">
-                <div class="">
-                      <span class="welcome-string">Daftar</span>
-                </div>
-              </div>
-              <div class="row">
-                  <span class="login-string">Selamat datang, silahkan daftar terlebih dahulu untuk menggunakan apps ini.</span>
-              </div>
-              <div class="row">
-                <?php $form = ActiveForm::begin(['id' => 'register-form-mobile']); ?>
-
-                    <?= Alert::widget() ?>
-
-                    <?= $form->field($model, 'name')->textInput(['style'=>'position:relative;z-index:3;width:100%'])->label('Nama Lengkap') ?>
-
-                    <?= $form->field($model, 'email')->textInput(['style'=>'position:relative;z-index:3;width:100%'])->label('Alamat Email') ?>
-
-                    <?= $form->field($model, 'password')->passwordInput()->label('Kata Sandi') ?>
-
-                    <?= $form->field($model, 'repassword')->passwordInput()->label('Ulang Kata Sandi') ?>
-
-                    <div class="form-group" style="margin-top:5%">
-                        <?= Html::submitButton('Daftar<i class="fas fa-long-arrow-alt-right" style="float:right;margin-top:6px"></i>', ['class' => 'btn btn-primary col-12', 'name' => 'login-button']) ?>
-                    </div>
-
-                    <div class="text-center" style="color:#999;margin:1em 0;margin-top:5%">
-                        Sudah memiliki akun? <?= Html::a('Masuk sekarang', ['site/index']) ?>.
-                    </div>
-
-                <?php ActiveForm::end(); ?>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

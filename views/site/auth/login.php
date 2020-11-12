@@ -36,24 +36,15 @@ $this->title = 'Escalation App | Masuk';
 
                   <?= Alert::widget() ?>
 
-                  <?= $form->field($model, 'email')->textInput(['style'=>'position:relative;z-index:3;'])->label('Alamat Email') ?>
+                  <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;'])->label('Username') ?>
 
                   <?= $form->field($model, 'password')->passwordInput(['style'=>'position:relative;z-index:3;'])->label('Kata Sandi') ?>
 
                   <?= $form->field($model, 'rememberMe')->checkbox(['checked' => false,'class' => 'custom-control-input'])->label('Ingat Saya') ?>
 
-                  <div style="color:#999;margin:1em 0;">
-                      Kamu lupa kata sandi kamu? <?= Html::a('Atur ulang sekarang', ['site/request-password-reset']) ?>.
-                  </div>
-
                   <div class="form-group" style="margin-top:8%">
                       <?= Html::submitButton('Masuk<i class="fas fa-long-arrow-alt-right" style="float:right;margin-top:6px"></i>', ['class' => 'btn btn-primary col-12', 'name' => 'login-button']) ?>
                   </div>
-
-                  <div class="text-center" style="color:#999;margin:1em 0;margin-top:10%">
-                      Belum memiliki akun? <?= Html::a('Daftar sekarang', ['site/register']) ?>.
-                  </div>
-
               <?php ActiveForm::end(); ?>
             </div>
           </div>
@@ -97,7 +88,7 @@ $this->title = 'Escalation App | Masuk';
               <div class="row">
                 <?php $form = ActiveForm::begin(['id' => 'login-form-mobile']); ?>
 
-                    <?= $form->field($model, 'email')->textInput(['autofocus' => true, 'style'=>'position:relative;z-index:3']) ?>
+                    <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;'])->label('Username') ?>
 
                     <?= $form->field($model, 'password')->passwordInput() ?>
 

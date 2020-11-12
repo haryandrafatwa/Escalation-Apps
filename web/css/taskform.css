@@ -1,0 +1,89 @@
+body,html{
+  min-height: 100%;
+  height: auto;
+  margin: 0px;
+  padding: 0px;
+}
+
+.btn-primary{
+  background: #2F94C3;
+  border-color: #2F94C3
+}
+
+.btn-primary:hover{
+  background: #006095;
+  outline: #006095;
+  box-shadow: #006095;
+}
+
+.btn-primary:active:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+.btn-primary:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+
+.btn-primary:active{
+  background: #006095;
+  outline: #006095;
+}
+
+.jumbotron{
+  border:1px solid #BBB;
+  background: transparent;
+}
+
+#task-form{
+  width: 100%
+}
+
+.form-group label{
+  color:#2F94C3
+}
+
+.form-group a{
+  color:#2F94C3;
+  text-decoration: none;
+}
+
+.form-group a:hover{
+  color:#999;
+  text-decoration: none;
+}
+
+.form-control{
+  border: 1px solid #2F94C3;
+}
+
+@media only screen and ((min-width: 768px) or (min-height: 760px)){
+
+  #desktop-version{
+    display:block
+  }
+
+  #mobile-version{
+    display:none
+  }
+}
+
+@media only screen and (min-width: 320px) and (max-width: 768px){
+  body,html{
+    background:linear-gradient( #ffffff, #ffffff);
+    background-size: 50% 100%;
+    background-repeat:no-repeat;
+    background-position: left top;
+    height: 100%
+  }
+
+  #desktop-version{
+    display:none
+  }
+
+  #mobile-version{
+    display:block
+  }
+}

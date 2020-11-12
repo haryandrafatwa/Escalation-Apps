@@ -11,9 +11,10 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use app\widgets\Alert;
 use yii\bootstrap4\ActiveForm;
+use app\models\Images;
+use yii\helpers\ArrayHelper;
 
 $this->registerAssetBundle('app\assets\AppAsset');
-$this->registerAssetBundle('app\assets\DashboardAsset');
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -36,24 +37,44 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.css" integrity="sha512-SUJFImtiT87gVCOXl3aGC00zfDl6ggYAw5+oheJvRJ8KBXZrr/TMISSdVJ5bBarbQDRC2pR5Kto3xTR0kpZInA==" crossorigin="anonymous" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js" integrity="sha512-QEiC894KVkN9Tsoi6+mKf8HaCLJvyA6QIRzY5KrfINXYuP9NxdIkRQhGq3BZi0J4I7V5SidGM3XUQ5wFiMDuWg==" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w==" crossorigin="anonymous" />
+    <script src="<?= Url::base(true) ?>/js/push.js" charset="utf-8"></script>
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <?php $this->head() ?>
 </head>
 <body>
 <?php $this->beginBody() ?>
 
+<?php $images = new Images(); $path = $images->findIdentity(Yii::$app->user->identity->images_id); ?>
+<span id="role-user" hidden><?= Yii::$app->user->identity->role; ?></span>
+<span id="name-user" hidden><?= Yii::$app->user->identity->name; ?></span>
+<span id="notif-url" hidden><?= Yii::$app->urlManager->createAbsoluteUrl('site/addtask') ?></span>
 <div class="wrap">
   <div class="container-fluid">
       <div class="row min-vh-100 flex-column flex-md-row">
           <!-- Sidebar -->
           <aside class="col-12 col-md-2 p-0 bg-light flex-shrink-1">
-              <nav class="navbar navbar-expand-md navbar-light bg-light flex-md-column flex-row align-items-start py-2">
-                  <button class="navbar-toggler align-self-center" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                      <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="profil-toggler">
-                    <a href="#" class="ml-auto"><?= Html::img(Url::to('@web/images/avatar.png'), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar']) ?></a>
-                    <div class="profil-btn ml-1" style="float:right;"  data-toggle="collapse" data-target="#navbarProfil" aria-controls="navbarProfil" aria-expanded="false" aria-label="Toggle navigation">
-                      <i class="fas fa-chevron-down p-3"></i>
+              <nav class="navbar navbar-expand-md navbar-light bg-light flex-md-column flex-row align-items-start py-2 m-0 p-0">
+                  <div class="container-fluid" style="height:auto;width: 100%;">
+                    <div class="row m-0 p-0">
+                      <div class="col-3 align-self-center">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                      </div>
+                      <div class="col-6 d-flex justify-content-center align-self-center" style="width:100%;">
+                        <a class="brand-logo d-flex justify-content-center" href="<?= Url::base(true) ?>">
+                            <?= Html::img(Url::to('@web/images/logo.svg'), ['alt' => 'My logo','style'=>'width:100%','class'=>'']) ?>
+                        </a>
+                      </div>
+                      <div class="col-3 align-self-center m-0 p-0">
+                        <div class="profil-toggler d-flex justify-content-end">
+                          <a href="<?= Url::base(true);?>/site/profile" class=" d-flex justify-content-center"><?= Html::img(Url::to('@web'.$path), ['alt' => 'My logo','width'=>'40','height'=>'40','class'=>'avatar d-flex align-self-center']) ?></a>
+                          <div class="profil-btn align-self-center" style="float:right;padding:12px!important"  data-toggle="collapse" data-target="#navbarProfil" aria-controls="navbarProfil" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fas fa-chevron-down"></i>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -65,7 +86,7 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                               </a>
                           </li>
                           <li class="nav-item">
-                              <?= Html::submitButton('Buat Task Baru<i class="fas fa-plus" style="float:right;margin-top:calc(1% + 0.3vw);margin-right:4%"></i>', ['class' => 'btn btn-primary col-11 nav-link pl-0 mt-5', 'onclick' => "openForm('".Url::base(true)."')", 'id' => 'form-btn']) ?>
+                              <?= Html::Button('Buat Task Baru<i class="fas fa-plus" style="position:absolute;right: 10%; top: 35%"></i>', ['class' => 'btn btn-primary col-11 nav-link pl-0 mt-5', 'onclick' => "openForm('".Url::base(true)."/site/addtask')", 'id' => 'form-btn']) ?>
                           </li>
                           <li class="nav-item nav-item-link mt-5 nav-item-margin">
                               <?php if($this->params['title'] == 'Escalation Apps | Dashboard'): ?>
@@ -121,28 +142,28 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                           </li>
                           <li class="nav-item"><hr style="background-color:#8A9499;margin-top: 5%;"></li>
                           <li class="nav-item nav-item-link nav-item-margin">
-                              <?php if($this->params['title'] == 'Escalation Apps | Semua Riwayat'): ?>
+                              <?php if($this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
                                 <a class="nav-link pl-0 active-tag" href="#">
                                     <?= Html::img(Url::to('@web/images/file_active.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="active d-none d-md-inline">Semua Riwayat</span>
+                                    <span class="active d-none d-md-inline">Riwayat Saya</span>
                                 </a>
                               <?php else: ?>
                                 <a class="nav-link pl-0" href="#">
                                     <?= Html::img(Url::to('@web/images/file_passive.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="d-none d-md-inline">Semua Riwayat</span>
+                                    <span class="d-none d-md-inline">Riwayat Saya</span>
                                 </a>
                               <?php endif; ?>
                           </li>
                           <li class="nav-item nav-item-link nav-item-margin">
-                              <?php if($this->params['title'] == 'Escalation Apps | Profil'): ?>
-                                <a class="nav-link pl-0 active-tag" href="#">
+                              <?php if($this->params['title'] == 'Escalation Apps | Pegawai'): ?>
+                                <a class="nav-link pl-0 active-tag" href="<?= Url::base(true);?>/site/pegawai">
                                     <?= Html::img(Url::to('@web/images/user_active.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="active d-none d-md-inline">Profil</span>
+                                    <span class="active d-none d-md-inline">Pegawai</span>
                                 </a>
                               <?php else: ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true);?>/site/pegawai">
                                     <?= Html::img(Url::to('@web/images/user_passive.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="d-none d-md-inline">Profil</span>
+                                    <span class="d-none d-md-inline">Pegawai</span>
                                 </a>
                               <?php endif; ?>
                           </li>
@@ -152,11 +173,11 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                       <ul class="flex-md-column flex-row navbar-nav w-100 justify-content-between mt-4" style="text-align:center!important">
                           <li class="nav-item nav-item-link" data-toggle="tooltip" title="Dashboard">
                               <?php if($this->params['title'] == 'Escalation Apps | Dashboard'): ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true) ?>">
                                     <?= Html::img(Url::to('@web/images/dashboard_active.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php else: ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true) ?>">
                                     <?= Html::img(Url::to('@web/images/dashboard_passive.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php endif; ?>
@@ -194,8 +215,8 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                                 </a>
                               <?php endif; ?>
                           </li>
-                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Semua Riwayat">
-                              <?php if($this->params['title'] == 'Escalation Apps | Semua Riwayat'): ?>
+                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Riwayat Saya">
+                              <?php if($this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
                                 <a class="nav-link pl-0" href="#">
                                     <?= Html::img(Url::to('@web/images/file_active.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
@@ -205,13 +226,13 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                                 </a>
                               <?php endif; ?>
                           </li>
-                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Profil">
-                              <?php if($this->params['title'] == 'Escalation Apps | Profil'): ?>
-                                <a class="nav-link pl-0" href="#">
+                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Pegawai">
+                              <?php if($this->params['title'] == 'Escalation Apps | Pegawai'): ?>
+                                <a class="nav-link pl-0" href="<?= Url::base(true);?>/site/pegawai">
                                     <?= Html::img(Url::to('@web/images/user_active.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php else: ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true);?>/site/pegawai">
                                     <?= Html::img(Url::to('@web/images/user_passive.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php endif; ?>
@@ -221,10 +242,16 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                   <div class="collapse navbar-collapse " id="navbarProfil">
                       <ul class="flex-md-column flex-row navbar-nav w-100 justify-content-between mt-4" style="text-align:center!important;">
                           <li class="nav-item nav-item-profil" style="width:100%;">
-                              <a class="nav-link pl-0" href="#"><i class="fas fa-bell fa-md mr-2"></i>Notifikasi</a>
+                              <a class="nav-link pl-0" href="<?= Url::base(true);?>/site/notifikasi"><?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'12','height'=>'12','class'=>'mr-1']) ?>
+                              Notifikasi</a>
+                              <a class="nav-link pl-0" href="<?= Url::base(true);?>/site/notifikasi">
+                                <?= Html::img(Url::to('@web/images/notif_active.svg'), ['alt' => 'My logo','width'=>'12','height'=>'12','class'=>'mr-1']) ?>
+                                Notifikasi</a>
                           </li>
                           <li class="nav-item nav-item-profil" style="width:100%;">
-                              <a class="nav-link pl-0" href="#"><i class="fas fa-sign-out-alt fa-md mr-2"></i>Keluar</a>
+                            <?php $form = ActiveForm::begin(['id' => 'logout-form','action' => ['site/logout'],'options' => ['method' => 'post']]); ?>
+                                <?= Html::submitButton('<i class="fas fa-sign-out-alt fa-md mr-2"></i>Keluar', ['class' => 'dropdown-item text-center', 'name' => 'logout-button']) ?>
+                            <?php ActiveForm::end(); ?>
                           </li>
                       </ul>
                   </div>
@@ -235,15 +262,19 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
           <main class="col bg-faded py-3 flex-grow-1 main-style mt-4">
               <?php if($this->params['title'] == 'Escalation Apps | Dashboard'): ?>
                 <div class="container-fluid p-0" style="">
+                  <div class="row" style="width:30%">
+                    <?= Html::Button('Buat Task Baru<i class="fas fa-plus" style="position:absolute;right: 10%; top: 35%"></i>', ['class' => 'btn btn-primary col-12 nav-link d-none', 'onclick' => "openForm('".Url::base(true)."/site/addtask')", 'id' => 'form-btn']) ?>
+                  </div>
                   <div class="row">
-                    <div class="col p-0">
+                    <div class="col p-0 header-title">
                       <span class="welcome-message">Selamat datang kembali, <?= Yii::$app->user->identity->name; ?>!</span>
                     </div>
-                    <div class="col-5" style="">
+                    <div class="col-5 profile-items d-none">
                         <div class="row" style="">
-                          <?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center']) ?>
-                          <div class="ml-4 profil-btn" style="display:none">
-                            <?= Html::img(Url::to('@web/images/avatar.png'), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar' ,'id'=>"ava-profil"]) ?>
+                          <?= Html::img(Url::to('@web/images/notif_active.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                          <?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center d-none','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                          <div class="ml-4 profil-btn">
+                            <?= Html::img(Url::to('@web'.$path), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar' ,'id'=>"ava-profil",'onclick'=>'window.location = "'.Url::base(true).'/site/profile"']) ?>
                             <span class="ml-3" style="font-size: calc(50% + 0.4vw);" id="dropdown-profil" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <?= Yii::$app->user->identity->name; ?><i class="fas fa-chevron-down ml-4"></i>
                             </span>
@@ -258,20 +289,51 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                     </div>
                   </div>
                 </div>
+              <?php elseif($this->params['title'] == 'Escalation Apps | Profil' || $this->params['title'] == 'Escalation Apps | Pengaturan Notifikasi' || $this->params['title'] == 'Escalation Apps | Ubah Kata Sandi'): ?>
+                  <div class="container-fluid p-0" style="">
+                    <div class="row">
+                      <div class="col p-0 header-title">
+                        <span class="welcome-message">Profil Saya
+                        </span>
+                      </div>
+                      <div class="col-5 profile-items" style="display:none">
+                          <div class="row" style="">
+                            <?= Html::img(Url::to('@web/images/notif_active.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                            <?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center d-none','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                            <div class="ml-4 profil-btn">
+                              <?= Html::img(Url::to('@web'.$path), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar' ,'id'=>"ava-profil",'onclick'=>'window.location = "'.Url::base(true).'/site/profile"']) ?>
+                              <span class="ml-3" style="font-size: calc(50% + 0.4vw);" id="dropdown-profil" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <?= Yii::$app->user->identity->name; ?><i class="fas fa-chevron-down ml-4"></i>
+                              </span>
+                              <div class="dropdown-menu mt-4" style="margin-right:5%" aria-labelledby="dropdown-profil">
+                                <!-- <a class="dropdown-item text-center" href="index.php?r=site/logout">Keluar</a> -->
+                                <?php $form = ActiveForm::begin(['id' => 'logout-form','action' => ['site/logout'],'options' => ['method' => 'post']]); ?>
+                                    <?= Html::submitButton('<i class="fas fa-sign-out-alt fa-md mr-2"></i>Keluar', ['class' => 'dropdown-item text-center', 'name' => 'logout-button']) ?>
+                                <?php ActiveForm::end(); ?>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
               <?php else: ?>
                 <div class="container-fluid p-0" style="">
+                  <div class="row" style="width:30%">
+                    <?= Html::submitButton('Buat Task Baru<i class="fas fa-plus" style="position:absolute;right: 10%; top: 35%"></i>', ['class' => 'btn btn-primary col-12 nav-link d-none', 'onclick' => "openForm('".Url::base(true)."/site/addtask')", 'id' => 'form-btn']) ?>
+                  </div>
                   <div class="row">
-                    <div class="col search-layout input-group align-self-center p-2">
+                    <div class="col header-title search-layout input-group align-self-center p-2">
                       <div class="input-group-prepend">
                         <div class="input-group-text form-control" id="btnGroupAddon"><i class="fas fa-search"></i></div>
                       </div>
                       <input type="text" class="form-control" placeholder="Cari berdasarkan Task, Line, Deskripsi, atau lain-lain." aria-label="Recipient's username" aria-describedby="basic-addon2">
                     </div>
-                    <div class="col-5" style="">
+                    <div class="col-5 profile-items" style="display:none">
                         <div class="row" style="">
-                          <?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center']) ?>
-                          <div class="ml-4 profil-btn" style="display:none">
-                            <?= Html::img(Url::to('@web/images/avatar.png'), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar' ,'id'=>"ava-profil"]) ?>
+                          <?= Html::img(Url::to('@web/images/notif_active.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                          <?= Html::img(Url::to('@web/images/notif.svg'), ['alt' => 'My logo','width'=>'25','height'=>'25','class'=>'ml-auto ic-notif align-self-center d-none','onclick'=>'window.location = "'.Url::base(true).'/site/notifikasi"']) ?>
+                          <div class="ml-4 profil-btn">
+                            <?= Html::img(Url::to('@web'.$path), ['alt' => 'My logo','width'=>'50','height'=>'50','class'=>'avatar' ,'id'=>"ava-profil",'onclick'=>'window.location = "'.Url::base(true).'/site/profile"']) ?>
                             <span class="ml-3" style="font-size: calc(50% + 0.4vw);color:#999;font-weight:600" id="dropdown-profil" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               <?= Yii::$app->user->identity->name; ?><i class="fas fa-chevron-down ml-4"></i>
                             </span>

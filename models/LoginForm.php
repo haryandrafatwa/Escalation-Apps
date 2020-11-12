@@ -13,7 +13,7 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
-    public $email;
+    public $username;
     public $password;
     public $rememberMe = true;
 
@@ -27,8 +27,8 @@ class LoginForm extends Model
     {
         return [
             // username and password are both required
-            [['email', 'password'], 'required', 'message'=>'{attribute} tidak boleh kosong.'],
-            ['email', 'email', 'message'=>'Alamat email tidak valid.'],
+            [['username', 'password'], 'required', 'message'=>'{attribute} tidak boleh kosong.'],
+            ['username', 'string', 'min' => 2, 'message'=>'Username minimal memiliki 2 karakter.'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
@@ -49,7 +49,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Alamat email atau kata sandi anda salah.');
+                $this->addError($attribute, 'Username atau kata sandi anda salah.');
             }
         }
     }
@@ -74,7 +74,7 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->_user === false) {
-            $this->_user = User::findByEmail($this->email);
+            $this->_user = User::findByUsername($this->username);
         }
 
         return $this->_user;

@@ -1,13 +1,17 @@
 <?php
-
 namespace app\controllers;
 
+use Pusher;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 
+use app\models\AddNotif;
+use app\models\User;
+use app\models\Notifikasi;
+use app\models\TaskForm;
 use app\models\RegisterForm;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -19,8 +23,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
-    {
+    public function behaviors(){
         return [
             'access' => [
                 'class' => AccessControl::className(),
@@ -45,8 +48,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
-    public function actions()
-    {
+    public function actions(){
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
@@ -58,24 +60,13 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $this->layout = 'auth/login';
         return $this->actionLogin();
     }
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
+    public function actionLogin(){
         if (!Yii::$app->user->isGuest) {
           $this->layout = 'main';
           $this->view->params['title'] = 'Escalation Apps | Dashboard';
@@ -93,85 +84,125 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionRegister()
-    {
+    public function actionRegister(){
         $this->layout = 'auth/register';
         $model = new RegisterForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Terima kasih telah melakukan registrasi. Silahkan cek <b>Email Anda</b> untuk verifikasi akun.');
-            return $this->actionRegisterDone($model->getUser());
+            return $this->redirect(['site/pegawai']);
         }
 
         return $this->render('auth/register', [
-            'model' => $model,
+            'model' => $model,'user'=>Yii::$app->user
         ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
+    public function actionAddtask(){
+        $this->layout = 'taskform';
+        $this->view->params['title'] = 'Escalation Apps | Ajukan Task';
+        $model = new TaskForm();
+        if ($model->load(Yii::$app->request->post()) && $model->addTask()) {
+            Yii::$app->session->setFlash('success', 'Terima kasih telah membuat task baru.');
+            $options = array(
+              'cluster' => 'ap1',
+              'useTLS' => true
+            );
+            $pusher = new Pusher\Pusher(
+              '61793d530781baf0985a',
+              '7d369d9e90d9efdbf4ec',
+              '1105147',
+              $options
+            );
+            $data['created_at'] = $model->created_at;
+            $data['id'] = $model->id;
+            $data['from'] = $model->nameFrom;
+            $data['deskripsi'] = $model->deskripsi;
+            $data['line'] = $model->lineName;
+            $data['role'] = Yii::$app->user->identity->role;
+            $data['jenis'] = $model->jenis;
+            $pusher->trigger('channel-task', 'new-task', $data);
+
+            $this->layout = 'main';
+            return $this->redirect(['index']);
+        }
+
+        if((!empty($_POST['forName'])) && (!empty($_POST['task_id']))){
+          $forName = $_POST['forName'];
+          $task_id = $_POST['task_id'];
+          $created_at = $_POST['created_at'];
+          $notif = new Notifikasi();
+          $checkDuplicate = $notif->findDuplicate($this->findFromId($forName),$task_id,$created_at);
+          if($checkDuplicate < 1){
+            $notif->setForId($this->findFromId($forName));
+            $notif->setTaskId($task_id);
+            $notif->setIs_read(False);
+            $notif->save();
+          }
+        }
+
+        return $this->render('addTask', [
+            'model' => $model,'user'=>Yii::$app->user
+        ]);
+    }
+
+    public function actionLogout(){
         Yii::$app->user->logout();
 
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+    public function actionProfile(){
+        $this->layout = 'main';
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+
+        $model = new RegisterForm();
+        $this->view->params['title'] = 'Escalation Apps | Profil';
+        return $this->render('profile', ['model'=>$model,'user'=>Yii::$app->user]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
+    public function actionPegawai(){
+        $this->layout = 'main';
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
+        }
+        $this->view->params['title'] = 'Escalation Apps | Pegawai';
+        return $this->render('pegawai', ['user'=>Yii::$app->user]);
+    }
+
+    public function actionNotifsetting(){
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
+        }
+
+        $model = new RegisterForm();
+        $this->view->params['title'] = 'Escalation Apps | Pengaturan Notifikasi';
+        return $this->render('notifSetting', ['model'=>$model,'user'=>Yii::$app->user]);
+    }
+
+    public function actionNotifikasi(){
+        $this->layout = 'main';
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
+        }
+        $this->view->params['title'] = 'Escalation Apps | Notifikasi';
+        return $this->render('notifikasi', ['user'=>Yii::$app->user]);
+    }
+
     public function actionAbout()
     {
-    $this->view->params['title'] = 'Escalation Apps | About';
+        $this->view->params['title'] = 'Escalation Apps | About';
         return $this->render('about');
     }
 
-    public function actionRegisterDone($model)
-    {
-        $new_model = $model;
-        $this->layout = 'auth/registerDone';
-        return $this->render('auth/registerDone', [
-            'model' => $new_model,
-        ]);
-    }
-
-    public function actionVerifyEmail($token)
-    {
-        $this->layout = 'auth/verify';
-        try {
-            $model = new VerifyEmailForm($token);
-        } catch (InvalidArgumentException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-        if ($user = $model->verifyEmail()) {
-            if (Yii::$app->user->login($user)) {
-                Yii::$app->session->setFlash('success', 'Akun anda telah terverifikasi!');
-                return $this->render('auth/isVerify');
-            }
-        }
-        Yii::$app->session->setFlash('error', 'Maaf, token yang diberikan telah kadaluwarsa.');
-        return $this->render('auth/isVerify');
+    public function findFromId($forName){
+      $users = new User();
+      $user = $users->findByName($forName);
+      return $user->id;
     }
 }

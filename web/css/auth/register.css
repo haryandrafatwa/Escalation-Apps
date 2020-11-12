@@ -5,26 +5,6 @@ body,html{
   padding: 0px;
 }
 
-.welcome-string{
-  color: black;
-  font-weight: 600;
-  font-size:32px;
-}
-
-.login-string{
-  color: #999;
-  font-weight: 500;
-  font-size: 16px;
-}
-
-a{
-  color: #2F94C3
-}
-
-a:hover{
-  color: #006095
-}
-
 .btn-primary{
   background: #2F94C3;
   border-color: #2F94C3
@@ -52,116 +32,31 @@ a:hover{
   outline: #006095;
 }
 
-.app-desc-btn{
-  position:absolute;
-  bottom:0;
-  margin-left: 0px;
-}
-
-.app-desc-text:hover{
-  cursor: pointer;
-  color:#FF6584
-}
-
-.app-desc-text{
-  color: white;
-  margin-bottom:3%
-}
-
-.btn-circle{
-  background-color: #FF6584;
-  margin-bottom: 3%
-}
-
-.btn-circle.btn-sm {
-  width: 30px;
-  height: 30px;
-  padding: 6px 0px;
-  border-radius: 15px;
-  font-size: 8px;
-  text-align: center;
-}
-.btn-circle.btn-md {
-  width: 50px;
-  height: 50px;
-  padding: 7px 10px;
-  border-radius: 25px;
-  font-size: 10px;
-  text-align: center;
-}
-.btn-circle.btn-xl {
-  width: 70px;
-  height: 70px;
-  padding: 10px 16px;
-  border-radius: 35px;
-  font-size: 12px;
-  text-align: center;
-}
-
-.app-name{
-  color:white;
-  font-weight: bold;
-  font-size: 1.4rem;
-  float: left;
-  margin-left: 2%;
-  margin-top: 3%
-}
-
-.app-desc{
-  color:white;
-  font-weight: normal;
-  font-size: 1rem;
-  float: left;
-  margin-left: 2%;
-  margin-right: 30%;
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 14%;
-  z-index: 999;
-  display: none
-}
-
-.motto-1{
-  color:white;
-  font-weight: lighter;
-  font-size: 3rem;
-  margin-left: 2%;
-  margin-top: 16%;
-  position: relative;
-}
-
-.motto-2{
-  color:white;
-  font-weight: normal;
-  font-size: 3rem;
-  margin-left: 2%;
-  margin-top:-2vh;
-  position: relative;
-}
-
-.img-register{
-  width:110%;
-  position:absolute;
-  bottom:0;
-  left:0;
-  margin-bottom: 10%
-}
-
-#mobile-version{
-  display:none
+.jumbotron{
+  border:1px solid #BBB;
+  background: transparent;
 }
 
 #register-form{
-  width:100%;
+  width: 100%
 }
 
-#register-form{
-  width:100%;
+.form-group label{
+  color:#2F94C3
 }
 
-#register-form-mobile{
-  width:100%!important;
-  margin-top: 5%
+.form-group a{
+  color:#2F94C3;
+  text-decoration: none;
+}
+
+.form-group a:hover{
+  color:#999;
+  text-decoration: none;
+}
+
+.form-control{
+  border: 1px solid #2F94C3;
 }
 
 @media only screen and ((min-width: 768px) or (min-height: 760px)){

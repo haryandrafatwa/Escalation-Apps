@@ -17,8 +17,30 @@ body {
   background-color: #2F94C3;
   color: white!important;
   border: 1px solid #2F94C3;
-  border-radius: calc(1% + 0.5vw);
+  border-radius: 12px;
   font-size: calc(35% + 0.5vw);
+}
+
+.btn-primary:hover{
+  background: #006095;
+  outline: #006095;
+  box-shadow: #006095;
+}
+
+.btn-primary:active:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+.btn-primary:focus{
+  background: #006095;
+  outline: #006095;
+}
+
+
+.btn-primary:active{
+  background: #006095;
+  outline: #006095;
 }
 
 #form-btn{
@@ -54,7 +76,7 @@ body {
   background-size: 1.5% 70%!important;
   background-repeat:no-repeat!important;
   background-position: right!important;
-  margin-right: calc(1% + 0.5vw)!important;
+  margin-right: calc(7.5% + 1vw)!important;
 }
 
 .d-none{
@@ -87,22 +109,24 @@ body {
 
 .search-layout{
   background-color: white;
-  border-radius: 16px;
+  border-radius: 18px;
+  box-shadow: 2px 2px 8px 0px #CCC;
 }
 
 .input-group-text{
   background: none!important;
 }
 
-.form-control {
+.header-title .form-control {
   border:none!important;
   border-radius: 12px;
   color:#999;
 }
 
-::placeholder{
+.header-title ::placeholder{
   color:#999!important;
   font-weight: 600!important;
+  font-size: calc(10% + 1vw);
 }
 
 .header-text{
@@ -121,12 +145,17 @@ body {
 }
 
 @media only screen and (min-width: 767.5px){
-  .profil-btn{
+
+  .profile-items{
     display: block!important;
   }
 
+  .brand-logo{
+    display: none!important;
+  }
+
   .profil-toggler{
-    display: none;
+    display: none!important;
   }
 
   #navbarSupportedContent{
@@ -139,6 +168,26 @@ body {
 }
 
 @media only screen and (min-width: 320px) and (max-width: 767.5px){
+
+  .header-title{
+    margin-top: 2%;
+  }
+
+  .btn-primary{
+    display: block!important;
+  }
+
+  .header-title ::placeholder{
+    color:#999!important;
+    font-weight: 600!important;
+    font-size: calc(50% + 1vw);
+  }
+
+  .search-layout{
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 2px 2px 8px 0px #CCC;
+  }
 
   .profil-toggler{
     display: block;

@@ -1,0 +1,46 @@
+.read-all{
+  font-size: calc(1% + 0.8vw);
+  font-weight: 600;
+  color:#999
+}
+
+.notif-content{
+  background: #FFF;
+  border-radius: 1.5vw;
+  padding: 1%!important;
+  box-shadow: 2px 2px 8px 0px #CCC;
+}
+
+.notif-title{
+  font-size: calc(50% + 1vw);
+  font-weight: 600
+}
+
+.notif-item-date{
+  font-size: calc(10% + 1vw);
+  font-weight: 600
+}
+
+.notif-item-content{
+  font-size: calc(15% + 1vw);
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ic-notif:hover{
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 1024px){
+  .read-all{
+    font-size: calc(10% + 1vw);
+    font-weight: 600
+  }
+}

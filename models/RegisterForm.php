@@ -10,11 +10,15 @@ use app\models\User;
  */
 class RegisterForm extends Model
 {
+    public $username;
     public $name;
-    public $email;
+    public $nip;
+    public $role;
+    public $tgl_lahir;
     public $password;
-    public $repassword;
     public $user;
+    public $auth_key;
+    public $verification_token;
 
     /**
      * {@inheritdoc}
@@ -22,19 +26,16 @@ class RegisterForm extends Model
     public function rules()
     {
         return [
-            [['name','email', 'password'], 'required', 'message'=>'{attribute} tidak boleh kosong.'],
-            ['name', 'trim'],
+            [['name','username','nip','role','tgl_lahir', 'password'], 'required', 'message'=>'{attribute} tidak boleh kosong.'],
+            [['name', 'nip'],'string'],
+            [['name', 'nip'],'trim'],
             ['name', 'string', 'min' => 2, 'max' => 255],
 
-            ['email', 'trim'],
-            ['email', 'email'],
-            ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => 'Alamat email ini sudah pernah digunakan.'],
+            ['role', 'integer'],
+            [['tgl_lahir'], 'date', 'format' => 'php:d/m/Y'],
 
-            [['password', 'repassword'], 'string', 'min' => Yii::$app->params['passwordMinLength'], 'message' => '{attribute} harus mengandung minimal 8 karakter.'],
-            [['password','repassword'],'match', 'pattern' => '/^.*(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/', 'message' => '{attribute} harus mengandung minimal satu angka, huruf besar dan kecil.'],
-
-            ['repassword', 'required', 'message'=>'Ulang Kata Sandi tidak boleh kosong.']
+            [['password'], 'string', 'min' => Yii::$app->params['passwordMinLength'], 'message' => '{attribute} harus mengandung minimal 8 karakter.'],
+            [['password'],'match', 'pattern' => '/^.*(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/', 'message' => '{attribute} harus mengandung minimal satu angka, huruf besar dan kecil.'],
         ];
     }
 
@@ -45,46 +46,39 @@ class RegisterForm extends Model
      */
     public function signup()
     {
-        if (!$this->validate()) {
+        if ($this->validate()) {
             return null;
         }
 
-        $this->user = new User();
-        $this->user->name = $this->name;
-        $this->user->email = $this->email;
-        if ($this->password == $this->repassword) {
+          $this->user = new User();
+          $this->user->name = $this->name;
+          $this->user->nip = $this->nip;
+          $this->user->role = $this->role;
+          $this->user->images_id = 1;
+          $this->user->tgl_lahir = $this->tgl_lahir;
+          $this->password = $this->setPassword($this->tgl_lahir);
+          $this->user->username = $this->setUsername($this->name);
           $this->user->setPassword($this->password);
           $this->user->generateAuthKey();
-          $this->user->generateEmailVerificationToken();
-          $this->user->isVerify = false;
-          return $this->user->save() && $this->sendEmail($this->user);
-        }else{
-          Yii::$app->session->setFlash('error', 'Password harus sama.');
-        }
-
+          $this->user->generateVerificationToken();
+          $this->user->validateAuthKey($this->user->auth_key);
+          $this->user->status = User::STATUS_ACTIVE;
+          $this->user->is_online = False;
+          return $this->user->save();
     }
 
     public function getUser(){
       return $this->user;
     }
 
-    /**
-     * Sends confirmation email to user
-     * @param User $user user model to with email should be send
-     * @return bool whether the email was sent
-     */
+    public function setPassword($date){
+      $password = str_replace ("/","",$date);
+      return $password;
+    }
 
-    protected function sendEmail($user)
-    {
-        return Yii::$app
-            ->mailer
-            ->compose(
-                ['html' => 'emailVerify-html', 'text' => 'emailVerify-text'],
-                ['user' => $user]
-            )
-            ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->name . ' Bot'])
-            ->setTo($this->email)
-            ->setSubject('Account registration at ' . Yii::$app->name)
-            ->send();
+    public function setUsername($name){
+        $lower = strtolower($name);
+        $user_name = str_replace (" ",".",$lower);
+        return $user_name;
     }
 }

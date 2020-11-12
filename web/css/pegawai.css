@@ -1,0 +1,50 @@
+.btn-primary-outline{
+  border: 3px solid #2F94C3;
+  color:#2F94C3;
+  border-radius: 14px
+}
+
+.btn-primary-outline:hover{
+  background: #2F94C3;
+  color: #FFFF;
+  border-radius: 14px
+}
+
+.table-secondary{
+  background-color: #f3f3f3;
+}
+
+.table-secondary:hover{
+  background-color: #f3f3f3!important;
+}
+
+th{
+  vertical-align: middle!important;
+}
+
+thead th{
+  color:#999;
+}
+
+.table thead>tr>th,.table tbody>tr>th,.table tfoot>tr>th,.table thead>tr>td,.table tbody>tr>td,.table tfoot>tr>td{
+   padding:8px;
+   vertical-align:center;
+   border:none;
+}
+
+.table tbody>tr>th{
+  padding:8px;
+  line-height:2;
+  vertical-align:center;
+  border-bottom:1px solid #e0e0e0;
+    font-size: calc(1% + 0.9vw);
+}
+
+.table thead>tr>th{
+  font-size: calc(1% + 1vw);
+  line-height:calc(100% + 2.5);
+}
+
+.divisi-text{
+  font-size:calc(1% + 0.7vw);color:#999
+}
