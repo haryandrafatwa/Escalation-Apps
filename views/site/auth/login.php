@@ -36,7 +36,7 @@ $this->title = 'Escalation App | Masuk';
 
                   <?= Alert::widget() ?>
 
-                  <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;'])->label('Username') ?>
+                  <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;','autocapitalize' => 'none'])->label('Username') ?>
 
                   <?= $form->field($model, 'password')->passwordInput(['style'=>'position:relative;z-index:3;'])->label('Kata Sandi') ?>
 
@@ -88,7 +88,7 @@ $this->title = 'Escalation App | Masuk';
               <div class="row">
                 <?php $form = ActiveForm::begin(['id' => 'login-form-mobile']); ?>
 
-                    <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;'])->label('Username') ?>
+                                  <?= $form->field($model, 'username')->textInput(['style'=>'position:relative;z-index:3;','autocapitalize' => 'none'])->label('Username') ?>
 
                     <?= $form->field($model, 'password')->passwordInput() ?>
 

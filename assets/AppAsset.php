@@ -23,7 +23,8 @@ class AppAsset extends AssetBundle
         'css/site.css',
         'css/profil.css',
         'css/pegawai.css',
-        'css/notifikasi.css'
+        'css/notifikasi.css',
+        'css/detailtask.css',
     ];
     public $js = [
         'js/login.js'

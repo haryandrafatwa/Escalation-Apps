@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "push.js": "^1.0.12",
+    "quickblox": "^2.13.2"
+  }
+}

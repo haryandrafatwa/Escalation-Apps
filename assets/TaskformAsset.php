@@ -23,7 +23,6 @@ class TaskformAsset extends AssetBundle
         'css/taskform.css'
     ];
     public $js = [
-        'js/taskform.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

@@ -32,22 +32,21 @@ use yii\helpers\ArrayHelper;
                           <div class="row mt-4">
                               <?php $line=new Line; $lines = $line->getLines(); $listData=ArrayHelper::map($lines,'id','name'); $form = ActiveForm::begin(['id' => 'task-form','action' => ['site/addtask']]); ?>
 
-                                  <?= $form->field($model, 'nameFrom')->textInput(['class'=>'form-control','readonly'=>'','style'=>'','value'=>$user->identity->name]) ->label('Nama Lengkap') ?>
-                                  <?php
-                                  if ($user->identity->role == 2 || $user->identity->role == 5){
-                                    echo $form->field($model, 'jenis')->textInput(['class'=>'form-control','readonly'=>'','style'=>'','value'=>'Problem'])->label('Jenis Task');
-                                  }elseif ($user->identity->role == 3 || $user->identity->role == 4){
-                                    echo $form->field($model, 'jenis')->textInput(['class'=>'form-control','readonly'=>'','style'=>'','value'=>'Quality'])->label('Jenis Task');
-                                  }else{
-                                    echo $form->field($model, 'jenis')->dropDownList(["Problem"=>"Problem","Quality"=>"Quality"],['prompt'=>['text' => 'Pilih Jenis Task','options'=> ['disabled' => true, 'selected' => true]]]);;
-                                  }?>
+                                  <?= $form->field($model, 'nameFrom')->textInput(['class'=>'form-control',''=>'','style'=>'']) ->label('Nama Lengkap') ?>
 
-                                  <?= $form->field($model, 'lineName')->dropDownList($listData,['prompt'=>['text' => 'Pilih line','options'=> ['disabled' => true, 'selected' => true]]]); ?>
+                                  <?= $form->field($model, 'jenis')->dropDownList(["Problem"=>"Problem","Quality"=>"Quality"],['prompt'=>['text' => 'Pilih Jenis Task','options'=> ['disabled' => true, 'selected' => true]]]);;?>
+
+                                  <?php if(in_array($user->identity->name,$listData)){ $key = array_search($user->identity->name,$listData); ?>
+                                    <?= $form->field($model, 'lineName')->dropDownList($listData,['prompt'=>['text' => 'Pilih line','options'=> ['disabled' => true]],'options'=> [$key=>['selected'=> true]]]); ?>
+                                  <?php } else { ?>
+                                    <?= $form->field($model, 'lineName')->dropDownList($listData,['prompt'=>['text' => 'Pilih line','options'=> ['disabled' => true, 'selected' => true]]]); ?>
+                                  <?php } ?>
+
 
                                   <?= $form->field($model, 'deskripsi')->textarea(['rows'=>'3'])->label('Deskripsi') ?>
 
                                   <div class="form-group col-12 m-0 p-0 d-flex" style="margin-top:5%">
-                                      <?= Html::a('Kembali',['site/pegawai'],['class' => 'mr-auto align-self-center']) ?>
+                                      <?= Html::a('Kembali',['site/index'],['class' => 'mr-auto align-self-center']) ?>
                                       <?= Html::submitButton('Ajukan<i class="fas fa-long-arrow-alt-right" style="float:right;margin-top:6px"></i>', ['class' => 'btn btn-primary col-4', 'name' => 'register-button']) ?>
                                   </div>
 

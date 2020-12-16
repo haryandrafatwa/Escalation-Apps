@@ -39,7 +39,8 @@ class TaskForm extends Model
     {
         if ($this->validate()) {
           $task = new Task();
-          $task->setFromId($this->findFromId($this->nameFrom));
+          $task->setFromId(Yii::$app->user->identity->id);
+          $task->setRequester($this->nameFrom);
           $task->setJenis_task($this->jenis);
           $task->setLine_id($this->lineName);
           $task->setDeskripsi($this->deskripsi);
@@ -58,9 +59,9 @@ class TaskForm extends Model
     public function getTask(){
       return $this->task;
     }
-    public function findFromId($nameFrom){
+    public function findFromId($fromId){
       $users = new User();
-      $user = $users->findByName($nameFrom);
+      $user = $users->findByName($fromId);
       return $user->id;
     }
 

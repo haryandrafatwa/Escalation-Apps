@@ -22,11 +22,11 @@ class m201002_024633_create_user_table extends Migration
           'id' => $this->primaryKey(),
           'username' => $this->string()->notNull()->unique(),
           'name' => $this->string()->notNull(),
-          'nip' => $this->string()->notNull()->unique(),
+          'nip' => $this->string()->unique(),
           'password_hash' => $this->string()->notNull(),
           'role' => $this->smallInteger()->notNull(),
-          'images_id' => $this->smallInteger()->notNull(),
-          'tgl_lahir' => $this->date()->notNull(),
+          'images_id' => $this->integer()->notNull(),
+          'tgl_lahir' => $this->date(),
           'status' => $this->smallInteger()->notNull()->defaultValue(10),
           'is_online' => $this->boolean()->notNull(),
           'auth_key' => $this->string()->notNull(),
@@ -42,7 +42,7 @@ class m201002_024633_create_user_table extends Migration
       ], $tableOptions);
 
       $this->insert('{{%role}}', [
-          'name' => 'Set Up Man',
+          'name' => 'Line',
       ]);
       $this->insert('{{%role}}', [
           'name' => 'Maintenance',
@@ -68,23 +68,34 @@ class m201002_024633_create_user_table extends Migration
 
       $this->createTable('{{%task}}', [
           'id' => $this->primaryKey(),
-          'from_id' => $this->smallInteger()->notNull(),
-          'to_id' => $this->smallInteger(),
+          'from_id' => $this->integer()->notNull(),
+          'to_id' => $this->integer(),
+          'requester' => $this->string()->notNull(),
           'jenis_task' => $this->string()->notNull(),
-          'line_id' => $this->smallInteger()->notNull(),
-          'deskripsi' => $this->string()->notNull(),
+          'line_id' => $this->integer()->notNull(),
+          'deskripsi' => $this->text()->notNull(),
           'status_id' => $this->smallInteger()->notNull(),
-          'created_at' => $this->integer()->notNull(),
-          'updated_at' => $this->integer()->notNull(),
+          'response_time' => $this->string(),
+          'acc_time' => $this->string(),
+          'conf_time_1' => $this->string(),
+          'work_time' => $this->string(),
+          'done_time' => $this->string(),
+          'conf_time_2' => $this->string(),
+          'suggestion' => $this->text(),
+          'solution' => $this->text(),
+          'is_escalated' => $this->boolean()->notNull()->defaultValue(false),
+          'created_at' => $this->string()->notNull(),
+          'updated_at' => $this->string()->notNull(),
       ], $tableOptions);
 
       $this->createTable('{{%notifikasi}}', [
           'id' => $this->primaryKey(),
-          'for_id' => $this->smallInteger()->notNull(),
-          'task_id' => $this->smallInteger()->notNull(),
+          'for_id' => $this->integer()->notNull(),
+          'task_id' => $this->integer()->notNull(),
           'is_read' => $this->boolean()->notNull(),
-          'created_at' => $this->integer()->notNull(),
-          'updated_at' => $this->integer()->notNull(),
+          'deskripsi' => $this->string()->notNull(),
+          'created_at' => $this->string()->notNull(),
+          'updated_at' => $this->string()->notNull(),
       ], $tableOptions);
 
       $this->createTable('{{%images}}', [
@@ -94,6 +105,24 @@ class m201002_024633_create_user_table extends Migration
           'created_at' => $this->integer()->notNull(),
           'updated_at' => $this->integer()->notNull(),
       ], $tableOptions);
+
+      $this->createTable('{{%riwayat}}', [
+          'id' => $this->primaryKey(),
+          'aktivitas' => $this->string()->notNull(),
+          'user_id' => $this->integer()->notNull(),
+          'keterangan' => $this->text()->notNull(),
+          'created_at' => $this->string()->notNull(),
+          'updated_at' => $this->string()->notNull(),
+      ], $tableOptions);
+
+      $this->addForeignKey(
+          'fk-user-user_id',
+          '{{%riwayat}}',
+          'user_id',
+          '{{%user}}',
+          'id',
+          'CASCADE'
+      );
 
       $this->addForeignKey(
           'fk-user-from_id',
@@ -154,7 +183,8 @@ class m201002_024633_create_user_table extends Migration
 
       $this->createTable('{{%line}}', [
           'id' => $this->primaryKey(),
-          'name' => $this->string()->notNull(),
+          'name' => $this->string()->notNull()->unique(),
+          'is_created' => $this->boolean()->notNull(),
       ], $tableOptions);
 
       $this->addForeignKey(
@@ -192,7 +222,6 @@ class m201002_024633_create_user_table extends Migration
       ]);
 
       $this->insert('{{%user}}', [
-        'id' => 1,
         'username' => 'superior.mt',
         'name' => 'Superior MT',
         'nip' => '0000000001',
@@ -209,7 +238,6 @@ class m201002_024633_create_user_table extends Migration
       ]);
 
       $this->insert('{{%user}}', [
-        'id' => 2,
         'username' => 'superior.qc',
         'name' => 'Superior QC',
         'nip' => '0000000002',
@@ -226,7 +254,6 @@ class m201002_024633_create_user_table extends Migration
       ]);
 
       $this->insert('{{%user}}', [
-        'id' => 3,
         'username' => 'haryandra.fatwa',
         'name' => 'Haryandra Fatwa',
         'nip' => '1301174007',
@@ -243,14 +270,13 @@ class m201002_024633_create_user_table extends Migration
       ]);
 
       $this->insert('{{%user}}', [
-        'id' => 4,
-        'username' => 'aditya.maulana',
-        'name' => 'Aditya Maulana',
-        'nip' => '1301174309',
-        'password_hash' => '$2y$13$SvV8m3iZ.40RR9jztw5soeq.e7LLl7Q1UznDrJFcqwnTSHdEiPhCu',
+        'username' => 'blp.01',
+        'name' => 'BLP 01',
+        'nip' => NULL,
+        'password_hash' => '$2y$13$.ZsYkbs7Eka7eF7v1uADLuk.eUV0XLdqo3liodfwanGfvruxyTogK',
         'role' => 1,
         'images_id' => 1,
-        'tgl_lahir' => '1998-08-09',
+        'tgl_lahir' => NULL,
         'status' =>10,
         'is_online' => False,
         'auth_key' => 'T8fWy66vSgqW3iYV2By9BpvUH99B8zLT',
@@ -259,121 +285,154 @@ class m201002_024633_create_user_table extends Migration
         'updated_at' => 1604923983,
       ]);
 
-      $this->insert('{{%user}}', [
-        'id' => 5,
-        'username' => 'lazuardi.azhar',
-        'name' => 'Lazuardi Azhar',
-        'nip' => '1301174368',
-        'password_hash' => '$2y$13$SvV8m3iZ.40RR9jztw5soeq.e7LLl7Q1UznDrJFcqwnTSHdEiPhCu',
-        'role' => 2,
-        'images_id' => 1,
-        'tgl_lahir' => '1998-08-09',
-        'status' =>10,
-        'is_online' => False,
-        'auth_key' => 'T8fWy66vSgqW3iYV2By9BpvUH99B8zLT',
-        'verification_token' => 'PkTOvgTFPAZnD1mjyWz3rYOvAzddq8H1_1604992760',
-        'created_at' => 1604923983,
-        'updated_at' => 1604923983,
-      ]);
+      // $this->insert('{{%user}}', [
+      //   'id' => 5,
+      //   'username' => 'lazuardi.azhar',
+      //   'name' => 'Lazuardi Azhar',
+      //   'nip' => '1301174368',
+      //   'password_hash' => '$2y$13$SvV8m3iZ.40RR9jztw5soeq.e7LLl7Q1UznDrJFcqwnTSHdEiPhCu',
+      //   'role' => 2,
+      //   'images_id' => 1,
+      //   'tgl_lahir' => '1998-08-09',
+      //   'status' =>10,
+      //   'is_online' => False,
+      //   'auth_key' => 'T8fWy66vSgqW3iYV2By9BpvUH99B8zLT',
+      //   'verification_token' => 'PkTOvgTFPAZnD1mjyWz3rYOvAzddq8H1_1604992760',
+      //   'created_at' => 1604923983,
+      //   'updated_at' => 1604923983,
+      // ]);
 
       $this->insert('{{%line}}', [
           'name' => 'TUP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 02',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 03',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 04',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 05',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 06',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 07',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 08',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'TUP 09',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 02',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 03',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 04',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 05',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 06',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 07',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 08',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 09',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BOP 10',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'JAP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'JAP 02',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'JAP 03',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 03',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 05',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 06',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 07',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'EMP 15',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'LQP 04',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
-          'name' => 'EMP 01',
+          'name' => 'CUP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'OSP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BLP 01',
+          'is_created' => false,
       ]);
       $this->insert('{{%line}}', [
           'name' => 'BLP 02',
+          'is_created' => false,
       ]);
     }
 
@@ -382,6 +441,7 @@ class m201002_024633_create_user_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%riwayat}}');
         $this->dropTable('{{%notifikasi}}');
         $this->dropTable('{{%task}}');
         $this->dropTable('{{%user}}');

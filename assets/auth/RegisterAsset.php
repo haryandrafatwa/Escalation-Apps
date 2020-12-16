@@ -23,7 +23,6 @@ class RegisterAsset extends AssetBundle
         'css/auth/register.css'
     ];
     public $js = [
-        'js/register.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

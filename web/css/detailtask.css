@@ -1,0 +1,87 @@
+.detail-task-go-back{
+  color:#2F94C3!important;
+  font-size: calc(30% + 1vw)!important
+}
+
+.detail-task-go-back:hover{
+  text-decoration: none;
+  color: #999!important
+}
+
+.btn-danger{
+  color: white!important;
+  border-radius: 12px;
+  font-size: calc(35% + 0.5vw);
+}
+
+.btn-title{
+  font-size: calc(20% + 1vw)
+}
+
+.swal2-popup {
+  border-radius: 1.5vw;
+}
+
+#swal2-content{
+  font-size: calc(20% + 1vw);
+}
+
+.text-primary-color{
+  color:#2F94C3!important;
+}
+
+.tick {
+  font-size:1rem; white-space:nowrap; font-family:arial,sans-serif;width: 100%
+}
+
+.tick-flip,.tick-text-inline {
+  font-size:2.5em;
+}
+
+.tick-label {
+  margin-top:1em;font-size:1em;
+}
+
+.tick-char {
+  width:1.5em;
+}
+
+.tick-text-inline {
+  display:inline-block;text-align:center;min-width:1em;
+}
+
+.tick-text-inline+.tick-text-inline {
+  margin-left:-.325em;
+}
+
+.tick-group {
+  margin:0 .5em;text-align:center;
+}
+
+.tick-text-inline {
+   color: rgb(90, 93, 99) !important;
+}
+
+.tick-label {
+   color: rgb(90, 93, 99) !important;
+}
+
+.tick-flip-panel {
+   color: rgb(255, 255, 255) !important;
+}
+
+.tick-flip {
+   font-family: !important;
+}
+
+.tick-flip-panel-text-wrapper {
+   line-height: 1.45 !important;
+}
+
+.tick-flip-panel {
+   background-color: #2F94C3 !important;
+}
+
+.tick-flip {
+   border-radius:0.12em !important;
+}

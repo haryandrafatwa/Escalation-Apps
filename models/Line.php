@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  *
  * @property integer $id
  * @property string $name
+ * @property boolean $is_created
  */
 class Line extends ActiveRecord
 {
@@ -45,5 +46,9 @@ class Line extends ActiveRecord
 
     public function getLines(){
         return $this->find()->all();
+    }
+
+    public function getLinesRegis(){
+        return $this->find(['is_created' => true])->orderBy(['name' => SORT_ASC])->all();
     }
 }

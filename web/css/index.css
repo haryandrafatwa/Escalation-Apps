@@ -49,6 +49,11 @@
   color:#2F94C3;
 }
 
+.view-all:hover{
+  text-decoration: none;
+  color:#999;
+}
+
 .table-secondary{
   background-color: #f3f3f3;
 }
@@ -89,6 +94,10 @@ thead th{
   border-radius: 1.5vw;
   padding: 3%!important;
   box-shadow: 2px 2px 8px 0px #CCC;
+}
+
+.task-onprogress-items:hover{
+  cursor: pointer;
 }
 
 .title-task-onprogress{

@@ -31,11 +31,40 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
   overflow: hidden;
 }
 
 .ic-notif:hover{
   cursor: pointer;
+}
+
+.read-all:hover{
+  cursor: pointer;
+  color:#2F94C3;
+}
+
+.content-notif-item:hover{
+  cursor: pointer;
+}
+
+textarea{
+  width: 100%;
+  height: 100%;
+  border:none;
+  font-weight: bold;
+  resize:none;
+}
+
+.modal-notifikasi{
+  border-radius: 1.5vw;
+  border: none
+}
+
+.btn-secondary{
+  color: white!important;
+  border-radius: 12px;
+  font-size: calc(35% + 0.5vw);
 }
 
 @media only screen and (min-width: 320px) and (max-width: 1024px){
