@@ -22,9 +22,9 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
             </div>
           </div>
         <?php endif; ?>
-        <?php $unFinish = Task::find()->where(['status_id' => 5])->all(); if(count($unFinish) > 0 && Yii::$app->user->identity->role == 5):?>
+        <?php $unFinish = Task::find()->where(['status_id' => 5])->all(); if(count($unFinish) > 0 && Yii::$app->user->identity->role == 2):?>
           <div class="row">
-            <div class="alert alert-danger fade show" role="alert">
+            <div class="alert alert-danger fade show col-12" role="alert">
               Terdapat <?= count($unFinish); ?> task yang belum selesai. Segera periksa task tersebut!
             </div>
           </div>
@@ -51,11 +51,11 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                             <?php
                               $bestTime = 0;
                               $idBest = 0;
-                              $task = Task::find()->where(['not', ['acc_time' => null]])->andWhere(['not', ['conf_time_1' => null]])->all();
+                              $task = Task::find()->where(['not', ['acc_time' => null]])->andWhere(['not', ['response_time' => null]])->all();
                               if (count($task) > 0) {
                                   $i = 0; foreach ($task as $item) {
                                   $timeAcc = strtotime($item->acc_time);
-                                  $timeConf = strtotime($item->conf_time_1);
+                                  $timeConf = strtotime($item->response_time);
                                   $diff = $timeConf - $timeAcc; ?>
                                   <?php if($i == 0){
                                     $bestTime = $diff;
@@ -125,7 +125,7 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                             <tr id="row-<?= $task->id ?>">
                               <th class="pl-4 align-center"> <?= $task->requester ?></th>
                               <th class="align-center"><?= Line::findIdentity($task->line_id)->name ?></th>
-                              <th class="align-center" id="startHour-<?= $task->id ?>"></th>
+                              <th class="align-center" id="startTime-<?= $task->id ?>"></th>
                               <th class="align-center"><?= $task->deskripsi ?></th>
                               <th class="align-center">Diajukan</th>
                               <th class="pr-3 align-center"><a href="<?= Url::base(true);?>/site/detailtask?task_id=<?= $task->id ?>"><i class="fas fa-eye fa-sm" style="color: #2F94C3"></i></a></th>
@@ -137,7 +137,7 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                               date.setHours(date.getHours() + 6);
                               var startHour = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',hour12: true });
                               var startTime = date.toLocaleString('en-US', { year: 'numeric', day: 'numeric',month: 'numeric' });
-                              document.getElementById("startHour-<?= $task->id ?>").appendChild(document.createTextNode(startHour))
+                              document.getElementById("startTime-<?= $task->id ?>").innerHTML = startHour
 
                               var  batas_1 = 900000;
                               var  batas_2 = 1800000;
@@ -358,11 +358,11 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
                           <?php
                             $bestTime = 0;
                             $idBest = 0;
-                            $task = Task::find()->where(['not', ['acc_time' => null]])->andWhere(['not', ['conf_time_1' => null]])->all();
+                            $task = Task::find()->where(['not', ['acc_time' => null]])->andWhere(['not', ['response_time' => null]])->all();
                             if (count($task) > 0) {
                                 $i = 0; foreach ($task as $item) {
                                 $timeAcc = strtotime($item->acc_time);
-                                $timeConf = strtotime($item->conf_time_1);
+                                $timeConf = strtotime($item->response_time);
                                 $diff = $timeConf - $timeAcc; ?>
                                 <?php if($i == 0){
                                   $bestTime = $diff;

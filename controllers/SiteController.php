@@ -14,6 +14,7 @@ use app\models\Notifikasi;
 use app\models\TaskForm;
 use app\models\Task;
 use app\models\Line;
+use app\models\Riwayat;
 use app\models\RegisterForm;
 use app\models\LoginForm;
 use app\models\ContactForm;
@@ -121,7 +122,20 @@ class SiteController extends Controller
         $sql = "delete from public.line where id =".$id;
         Yii::$app->db->createCommand($sql)->execute();
       }
+      $sql = "insert into riwayat (aktivitas, user_id, keterangan, created_at, updated_at) values ('Hapus Line', ".Yii::$app->user->identity->id.",'Menghapus line ".$line->name.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+      Yii::$app->db->createCommand($sql)->execute();
       return $this->redirect(['site/line']);
+    }
+
+    public function actionDeltask(){
+      if(!empty($_GET['id'])){
+        $id = $_GET['id'];
+      }
+      $sql = "delete from public.task where id = ".$id;
+      Yii::$app->db->createCommand($sql)->execute();
+      $sql = "insert into riwayat (aktivitas, user_id, keterangan, created_at, updated_at) values ('Hapus Task', ".Yii::$app->user->identity->id.",'Menghapus task.','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+      Yii::$app->db->createCommand($sql)->execute();
+      return $this->redirect(['site/submission']);
     }
 
     public function actionDeluser(){
@@ -140,6 +154,8 @@ class SiteController extends Controller
         Line::updateAll(['is_created' => false], ['=','name', $name]);
         $sql = "delete from public.user where id = ".$id;
       }
+      Yii::$app->db->createCommand($sql)->execute();
+      $sql = "insert into riwayat (aktivitas, user_id, keterangan, created_at, updated_at) values ('Hapus Akun', ".Yii::$app->user->identity->id.",'Menghapus akun ".$name.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
       Yii::$app->db->createCommand($sql)->execute();
       return $this->redirect(['site/akun']);
     }
@@ -168,6 +184,10 @@ class SiteController extends Controller
             $data['role'] = Yii::$app->user->identity->role;
             $data['jenis'] = $model->jenis;
             $pusher->trigger('channel-task', 'new-task', $data);
+
+            $lines = new Line(); $lineNow = $lines->findIdentity($model->lineName);
+            $sql = "insert into riwayat (aktivitas, user_id, keterangan, created_at, updated_at) values ('Task Baru', ".Yii::$app->user->identity->id.",'Menambahkan task baru pada line ".$lineNow->name.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+            Yii::$app->db->createCommand($sql)->execute();
 
             $this->layout = 'main';
             return $this->redirect(['index']);
@@ -300,11 +320,37 @@ class SiteController extends Controller
             $url = 'index';
             return Yii::$app->response->redirect($url)->send();
         }elseif(in_array(Yii::$app->user->identity->role,[1,2,5])){
-          $this->view->params['title'] = 'Escalation Apps | Task Tidak Selesai';
+          $this->view->params['title'] = 'Escalation Apps | Task Belum Selesai';
           return $this->render('statusTask', ['userNow'=>Yii::$app->user,
           'task'=>Task::find()->where(['status_id' => 5])->orderBy(['created_at' => SORT_DESC])->all(),
           'taskProblem'=>Task::find()->where(['and',['jenis_task' => 'Problem','status_id' => 5]])->orderBy(['created_at' => SORT_DESC])->all(),
           'taskQuality'=>Task::find()->where(['and',['jenis_task' => 'Quality','status_id' => 5]])->orderBy(['created_at' => SORT_DESC])->all()]);
+        }
+    }
+
+    public function actionAllhistory(){
+        $this->layout = 'main';
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
+        }else{
+          $this->view->params['title'] = 'Escalation Apps | Semua Riwayat';
+          return $this->render('history', ['userNow'=>Yii::$app->user,
+          'riwayat'=>Riwayat::find()->orderBy(['created_at' => SORT_DESC])->all()
+          ]);
+        }
+    }
+
+    public function actionUserhistory(){
+        $this->layout = 'main';
+        if (Yii::$app->user->isGuest) {
+            $url = 'index';
+            return Yii::$app->response->redirect($url)->send();
+        }else{
+          $this->view->params['title'] = 'Escalation Apps | Riwayat Saya';
+          return $this->render('history', ['userNow'=>Yii::$app->user,
+          'riwayat'=>Riwayat::find()->where(['user_id' => Yii::$app->user->identity->id])->orderBy(['created_at' => SORT_DESC])->all()
+          ]);
         }
     }
 
@@ -378,6 +424,10 @@ class SiteController extends Controller
         $data['name'] = Yii::$app->user->identity->name;
         $data['task_id'] = $task->id;
         $pusher->trigger('channel-task', 'acc-task-'.$task->from_id, $data);
+
+        $lines = new Line(); $lineNow = $lines->findIdentity($task->line_id);
+        $sql = "insert into riwayat (aktivitas, user_id, keterangan, created_at, updated_at) values ('Menerima Task', ".Yii::$app->user->identity->id.",'Menerima task pada line ".$lineNow->name.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+        Yii::$app->db->createCommand($sql)->execute();
 
         $this->layout = 'main';
         return $this->redirect(['site/detailtask?task_id='.$task_id]);
@@ -539,7 +589,41 @@ class SiteController extends Controller
         return $this->redirect(['site/detailtask?task_id='.$task_id]);
     }
 
-    public function actionSendnotifsupv($taskID){
+    public function actionSolvenow(){
+      if(!empty($_GET['taskID'])){
+        $taskID = $_GET['taskID'];
+      }
+      $task = Task::findIdentity($taskID);
+      $mtObj = User::findIdentity($task->to_id);
+      $line = Line::findIdentity($task->line_id);
+
+      //Notify to Line
+      $descLine = $mtObj->name.' akan menyelesaikan task yang belum selesai pada '.$line->name.' mengenai '.$task->deskripsi.'.';
+      $sql = "insert into notifikasi (for_id, task_id, is_read,deskripsi,created_at,updated_at) values (".$task->from_id.", ".$taskID.",false,'".$descLine."','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+      Yii::$app->db->createCommand($sql)->execute();
+
+      #Task::updateAll(['to_id' => null,'response_time' => null, 'acc_time' => null, 'conf_time_1' => null, 'work_time' => null, 'done_time' => null, 'conf_time_2' => null], ['=','id', $task->id]);
+      Task::updateAll(['to_id' => Yii::$app->user->identity->id,'status_id' => 2, 'acc_time' => strftime("%Y-%m-%d %T"), 'response_time' => strftime("%Y-%m-%d %T"), 'suggestion' => null, 'conf_time_2' => null, 'conf_time_1' => null, 'work_time' => null, 'done_time' => null, 'is_escalated' => false], ['=','id', $task->id]);
+
+      $options = array(
+        'cluster' => 'ap1',
+        'useTLS' => true
+      );
+      $pusher = new Pusher\Pusher(
+        '61793d530781baf0985a',
+        '7d369d9e90d9efdbf4ec',
+        '1105147',
+        $options
+      );
+
+      $data['deskripsi'] = $descLine;
+      $pusher->trigger('channel-task', 'send-notif-'.$task->from_id, $data);
+
+      $this->layout = 'main';
+      return $this->redirect(['site/detailtask?task_id='.$taskID]);
+    }
+
+    public function actionSendnotifsupv(){
       if(!empty($_GET['taskID'])){
         $taskID = $_GET['taskID'];
       }
@@ -564,6 +648,45 @@ class SiteController extends Controller
 
       $data['deskripsi'] = $mtObj->name." sedang memperbaiki task pada line ".$line->name." lebih dari 30 menit. Cek detail task sekarang.";
       $pusher->trigger('channel-task', 'send-notif-1', $data);
+    }
+
+    public function actionTasktimeout(){
+      if(!empty($_GET['taskID'])){
+        $taskID = $_GET['taskID'];
+      }
+      $task = Task::findIdentity($taskID);
+      $mtObj = User::findIdentity($task->to_id);
+      $line = Line::findIdentity($task->line_id);
+
+      //Notify to MT
+      $descMT = 'Kamu telah melewati batas perbaikan 1x24 jam, task secara otomatis diubah menjadi task belum selesai.';
+      $sql = "insert into notifikasi (for_id, task_id, is_read,deskripsi,created_at,updated_at) values (".$task->to_id.", ".$taskID.",false,'".$descMT."','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+      Yii::$app->db->createCommand($sql)->execute();
+
+      //Notify to Line
+      $descLine = $mtObj->name.' telah melewati batas perbaikan 1x24 jam, task secara otomatis diubah menjadi task belum selesai.';
+      $sql = "insert into notifikasi (for_id, task_id, is_read,deskripsi,created_at,updated_at) values (".$task->from_id.", ".$taskID.",false,'".$descLine."','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."')";
+      Yii::$app->db->createCommand($sql)->execute();
+
+      #Task::updateAll(['to_id' => null,'response_time' => null, 'acc_time' => null, 'conf_time_1' => null, 'work_time' => null, 'done_time' => null, 'conf_time_2' => null], ['=','id', $task->id]);
+      Task::updateAll(['status_id' => 5, 'suggestion' => 'Pengerjaan task melebihi batas 1x24 jam.', 'conf_time_2' => strftime("%Y-%m-%d %T")], ['=','id', $task->id]);
+
+      $options = array(
+        'cluster' => 'ap1',
+        'useTLS' => true
+      );
+      $pusher = new Pusher\Pusher(
+        '61793d530781baf0985a',
+        '7d369d9e90d9efdbf4ec',
+        '1105147',
+        $options
+      );
+
+      $data['deskripsi'] = $descLine;
+      $pusher->trigger('channel-task', 'send-notif-'.$task->from_id, $data);
+
+      $data['deskripsi'] = $descMT;
+      $pusher->trigger('channel-task', 'send-notif-'.$task->to_id, $data);
     }
 
     public function actionUpdateresponsetime(){

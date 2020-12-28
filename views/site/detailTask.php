@@ -81,7 +81,7 @@ use app\models\Images;
                             <span>:</span>
                           </div>
                           <div class="col-8">
-                            <span><b><?php if($task->status_id == 1){echo "Diajukan";}elseif($task->status_id == 2){echo "Diterima";}elseif($task->status_id == 3){echo "Dikerjakan";}elseif($task->status_id == 4){echo "Selesai";}elseif($task->status_id == 5){echo "Tidak Selesai";} ?></b></span>
+                            <span><b><?php if($task->status_id == 1){echo "Diajukan";}elseif($task->status_id == 2){echo "Diterima";}elseif($task->status_id == 3){echo "Dikerjakan";}elseif($task->status_id == 4){echo "Selesai";}elseif($task->status_id == 5){echo "Belum Selesai";} ?></b></span>
                           </div>
                         </div>
                         <div class="row mt-2">
@@ -168,13 +168,12 @@ use app\models\Images;
                             <span class="btn-title text-primary-color">Task telah dilakukan pemeriksaan oleh rekan Supervisor.</span> <?php } } } else{ if(Yii::$app->user->identity->id != $task->to_id){?>
                             <span class="btn-title text-primary-color">Task telah dilakukan pemeriksaan oleh rekan QC.</span> <?php }else{?>
                             <span class="btn-title text-primary-color">Task telah dilakukan pemeriksaan oleh Anda.</span> <?php } }?>
-                          <?php }else{ ?>
-                            <span class="btn-title text-primary-color">Task sedang dilakukan pemeriksaan lebih lanjut oleh rekan Supervisor.</span>
-                          <?php } }
-                        }else{ if($task->status_id == 5){?>
-                          <span class="btn-title">Task ini belum terselesaikan. Apakah Anda telah mengetahui solusi dari task tersebut?</span>
-                          <button type="button" class="btn btn-primary acc-now col-12 mt-2" id="give-solution">Berikan solusi sekarang</button>
-                        <?php }} ?>
+                          <?php }else{ if($userNow->identity->role == 2){ ?>
+                            <span class="btn-title">Task ini masih belum terselesaikan, Apakah anda ingin menyelesaikannya?</span>
+                            <button type="button" class="btn btn-primary acc-now col-12 mt-2" id="solve-now">Selesaikan Sekarang</button>
+                          <?php } else{ ?>
+                            <span class="btn-title text-primary-color">Task sedang dilakukan pemeriksaan lebih lanjut oleh rekan MT.</span>
+                          <?php }} } } ?>
                           </div>
                         </div>
                     </div>
@@ -286,9 +285,6 @@ use app\models\Images;
   }?>
 <script type="text/javascript">
 
-  const minuteTimer = 10;
-  const minuteToMillis = 600000;
-
   var date = new Date("<?= $task->created_at ?>");
   var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   date.setHours(date.getHours() + 6);
@@ -322,15 +318,15 @@ use app\models\Images;
           Tick.options.setConstant(key, localization[key]);
         }
 
-        var offset = new Date( localStorage.getItem('countdown-offset') || acc_time );
+        var offset = new Date( localStorage.getItem('countdown-offset-<?= $task->id ?>') || acc_time );
 
         // store the offset (not really necessary but saves some if statements)
         if(status_id == 2){
-          localStorage.setItem('countdown-offset', offset);
+          localStorage.setItem('countdown-offset-<?= $task->id ?>', offset);
         }
         var timer = Tick.count.up(offset, { format: ['h','m','s']}).onupdate = function (value) {
           tick.value = value;
-          if(localStorage.getItem('countdown-offset') !== null){
+          if(localStorage.getItem('countdown-offset-<?= $task->id ?>') !== null){
             $.ajax({
               type: "POST",
               url: "<?= Yii::$app->urlManager->createAbsoluteUrl('site/updateresponsetime?task_id='.$task->id) ?>",
@@ -384,15 +380,42 @@ use app\models\Images;
             Tick.options.setConstant(key, localization[key]);
           }
 
-          var offset = new Date( localStorage.getItem('worktime-offset') || work_time );
+          var offset = new Date( localStorage.getItem('worktime-offset-<?= $task->id ?>') || work_time );
 
           // store the offset (not really necessary but saves some if statements)
           if(status_id == 3){
-            localStorage.setItem('worktime-offset', offset);
+            localStorage.setItem('worktime-offset-<?= $task->id ?>', offset);
           }
           var timer = Tick.count.up(offset, { format: ['h','m','s']}).onupdate = function (value) {
             tick.value = value;
-            if(localStorage.getItem('worktime-offset') !== null){
+            if(value[1] >= 1 && value[1] < 2){
+              console.log(value)
+              function sendNotifNow(){
+                $.ajax({
+                  type: "POST",
+                  url: "<?= Yii::$app->urlManager->createAbsoluteUrl('site/sendnotifsupv?taskID='.$task->id) ?>",
+                  success: function() {
+                  }
+                });
+                return false;
+              }
+              sendNotifNow()
+            }else if(value[1] >= 2){
+              function sendNotifNow(){
+                console.log(value)
+                $.ajax({
+                  type: "POST",
+                  url: "<?= Yii::$app->urlManager->createAbsoluteUrl('site/tasktimeout?taskID='.$task->id) ?>",
+                  success: function() {
+                    localStorage.removeItem('worktime-offset-<?= $task->id ?>');
+                    window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/detailtask') ?>?task_id=<?= $task->id?>';
+                  }
+                });
+                return false;
+              }
+              sendNotifNow()
+            }
+            if(localStorage.getItem('worktime-offset-<?= $task->id ?>') !== null){
               $.ajax({
                 type: "POST",
                 url: "<?= Yii::$app->urlManager->createAbsoluteUrl('site/updateworktime?task_id='.$task->id) ?>",
@@ -496,7 +519,7 @@ use app\models\Images;
             ).then((result) => {
               if (result.isConfirmed) {
                   window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/worknow') ?>?task_id=<?= $task->id; ?>';
-                  localStorage.removeItem('countdown-offset');
+                  localStorage.removeItem('countdown-offset-<?= $task->id ?>');
               }
             })
           }
@@ -522,7 +545,7 @@ use app\models\Images;
               ).then((result) => {
                 if (result.isConfirmed) {
                     window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/checknow') ?>?task_id=<?= $task->id; ?>';
-                    localStorage.removeItem('countdown-offset');
+                    localStorage.removeItem('countdown-offset-<?= $task->id ?>');
                 }
               })
             }
@@ -579,7 +602,7 @@ use app\models\Images;
                 ).then((result) => {
                   if (result.isConfirmed) {
                     window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/finishnow') ?>?task_id=<?= $task->id; ?>&suggestion='+result.value.suggestion+'&result='+result.value.result;
-                    localStorage.removeItem('worktime-offset');
+                    localStorage.removeItem('worktime-offset-<?= $task->id ?>');
                   }
                 })
               })
@@ -587,64 +610,41 @@ use app\models\Images;
           })
         });
 
-    $(document).on("click", "#give-solution", function () {
-      const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-          confirmButton: 'btn btn-primary ml-2 col-4',
-          cancelButton: 'btn btn-secondary mr-2 col-4'
-        },
-        buttonsStyling: false
-      })
-      swalWithBootstrapButtons.fire({
-        title: 'Kotak Solusi',
-        html: `<textarea id="solution" class="form-control" placeholder="Masukkan solusi problem pada task..." rows="3"></textarea>`,
-        confirmButtonText: 'Simpan',
-        focusConfirm: false,
-        allowOutsideClick: false,
-        preConfirm: () => {
-          const solution = Swal.getPopup().querySelector('#solution').value
-          if (!solution) {
-            Swal.showValidationMessage(`Silahkan berikan solusi terlebih dahulu!`)
-          }
-          return { solution: solution }
-        }
-      }).then((result) => {
-        swalWithBootstrapButtons.fire({
-          title: 'Apakah Anda yakin?',
-          text: "Setelah mengkonfirmasi pesan ini, aksi tidak dapat diubah kembali.",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Lanjutkan',
-          cancelButtonText: 'Batal',
-          reverseButtons: true,
-          allowOutsideClick: false,
-          preConfirm:() => {
-            const solution = result.value.solution
-            return{solution:solution}
-          }
-        }).then((result) => {
-          if (result.isConfirmed) {
-            swalWithBootstrapButtons.fire(
-            {
-              allowOutsideClick: false,
-              title: 'Berhasil!',
-              text: "Konfirmasi berhasil disimpan!",
-              icon: 'success',
-              preConfirm:() => {
-                const solution = result.value.solution
-                return{solution:solution,result:true}
-              }
-            }
-          ).then((result) => {
+        $(document).on("click", "#solve-now", function () {
+          const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: 'btn btn-primary ml-2 col-4',
+              cancelButton: 'btn btn-secondary mr-2 col-4'
+            },
+            buttonsStyling: false
+          })
+
+          swalWithBootstrapButtons.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Setelah menerima task ini, Anda tidak dapat merubah keputusan ini. Dan respone time akan secara otomatis berjalan.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Terima sekarang',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            allowOutsideClick: false
+          }).then((result) => {
             if (result.isConfirmed) {
-              window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/finishnow') ?>?task_id=<?= $task->id; ?>&solution='+result.value.solution+'&result='+result.value.result;
-              localStorage.removeItem('worktime-offset');
+              swalWithBootstrapButtons.fire(
+                {
+                  allowOutsideClick: false,
+                  title: 'Berhasil!',
+                  text: "Anda berhasil menerima task ini. Silahkan mengunjungi line tersebut untuk melanjutkan proses.",
+                  icon: 'success',
+                }
+              ).then((result) => {
+                if (result.isConfirmed) {
+                  window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/solvenow') ?>?taskID=<?= $task->id; ?>';
+                }
+              })
             }
           })
-        }
-        })
-      })
-    })
+        });
 
     $(document).on("click", "#finish", function () {
       <?php if($task->jenis_task == "Problem"){ ?>
@@ -687,7 +687,7 @@ use app\models\Images;
             ).then((result) => {
               if (result.isConfirmed) {
                 window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/finishnow') ?>?task_id=<?= $task->id; ?>&solution='+result.value.solution+'&result='+result.value.result;
-                localStorage.removeItem('worktime-offset');
+                localStorage.removeItem('worktime-offset-<?= $task->id ?>');
               }
               })
             })
@@ -733,6 +733,7 @@ use app\models\Images;
             ).then((result) => {
               if (result.isConfirmed) {
                 window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/checkdone') ?>?task_id=<?= $task->id; ?>&saran='+result.value.saran;
+                localStorage.removeItem('worktime-offset-<?= $task->id ?>');
               }
               })
             })

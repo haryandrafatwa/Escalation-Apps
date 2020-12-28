@@ -22,8 +22,8 @@ use app\models\Line;
                     <span class="content-title">Task Sedang Berjalan</span>
                   <?php elseif($this->params['title'] == 'Escalation Apps | Task Selesai'): ?>
                     <span class="content-title">Task Selesai</span>
-                  <?php elseif($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
-                    <span class="content-title">Task Tidak Selesai</span>
+                  <?php elseif($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
+                    <span class="content-title">Task Belum Selesai</span>
                   <?php elseif($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
                     <span class="content-title">Pengajuan Task</span>
                   <?php endif; ?>
@@ -71,7 +71,7 @@ use app\models\Line;
                            elseif($taskProblem[$i]->status_id == 4){echo "Selesai";}elseif($taskProblem[$i]->status_id == 5){echo "Belum Selesai";} ?></th>
                            <?php if($userNow->identity->name == $userFrom->name && $taskProblem[$i]->status_id == 1): ?>
                            <th class="pr-4 align-center">
-                              <a href="#"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
+                              <a href="javascript:deleteTask()"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
                               <a href="<?= Url::base(true);?>/site/detailtask?task_id=<?= $taskProblem[$i]->id ?>"><i class="fas fa-eye fa-sm ml-1" style="color: #2F94C3"></i></a>
                            </th>
                            <?php else: ?>
@@ -86,7 +86,7 @@ use app\models\Line;
                               var startTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',hour12: true });
                               document.getElementById("startTime-<?= $i ?>").appendChild(document.createTextNode(startTime))
 
-                              <?php if($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
+                              <?php if(($this->params['title'] == 'Escalation Apps | Pengajuan') || ($this->params['title'] == 'Escalation Apps | Task Belum Selesai')): ?>
                                 var  batas_1 = 900000;
                                 var  batas_2 = 1800000;
 
@@ -97,6 +97,41 @@ use app\models\Line;
                                   document.getElementById('row-<?= $i ?>').className = "alert-danger"
                                 }
                               <?php endif; ?>
+                              function deleteTask(){
+                                const swalWithBootstrapButtons = Swal.mixin({
+                                  customClass: {
+                                    confirmButton: 'btn btn-primary ml-2 col-4',
+                                    cancelButton: 'btn btn-secondary mr-2 col-4'
+                                  },
+                                  buttonsStyling: false
+                                })
+
+                                swalWithBootstrapButtons.fire({
+                                  title: 'Apakah Anda yakin?',
+                                  text: "Anda tidak dapat mengembalikan task yang sudah terhapus.",
+                                  icon: 'warning',
+                                  showCancelButton: true,
+                                  confirmButtonText: 'Hapus sekarang',
+                                  cancelButtonText: 'Batal',
+                                  reverseButtons: true,
+                                  allowOutsideClick: false
+                                }).then((result) => {
+                                  if (result.isConfirmed) {
+                                    swalWithBootstrapButtons.fire(
+                                      {
+                                        allowOutsideClick: false,
+                                        title: 'Berhasil!',
+                                        text: "Anda berhasil menghapus task ini.",
+                                        icon: 'success',
+                                      }
+                                    ).then((result) => {
+                                      if (result.isConfirmed) {
+                                          window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/deltask') ?>?id=<?= $taskProblem[$i]->id; ?>';
+                                      }
+                                    })
+                                  }
+                                })
+                              }
                            </script>
                         <?php
                         }
@@ -117,7 +152,7 @@ use app\models\Line;
                           <?= Html::img(Url::to('@web/images/no_data_ongoing.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                         <?php elseif($this->params['title'] == 'Escalation Apps | Task Selesai'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_done.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
-                        <?php elseif($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
+                        <?php elseif($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_undone.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                         <?php elseif($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_recent.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
@@ -169,7 +204,7 @@ use app\models\Line;
                            elseif($taskQuality[$i]->status_id == 4){echo "Selesai";}elseif($taskQuality[$i]->status_id == 5){echo "Belum Selesai";} ?></th>
                            <?php if($userNow->identity->name == $userFrom->name && $taskQuality[$i]->status_id == 1): ?>
                            <th class="pr-4 align-center">
-                              <a href="#"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
+                              <a href="javascript:deleteTask()"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
                               <a href="<?= Url::base(true);?>/site/detailtask?task_id=<?= $taskQuality[$i]->id ?>"><i class="fas fa-eye fa-sm ml-1" style="color: #2F94C3"></i></a>
                            </th>
                            <?php else: ?>
@@ -184,7 +219,7 @@ use app\models\Line;
                               var startTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',hour12: true });
                               document.getElementById("startTime-<?= $i ?>").appendChild(document.createTextNode(startTime))
 
-                              <?php if($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
+                              <?php if(($this->params['title'] == 'Escalation Apps | Pengajuan') || ($this->params['title'] == 'Escalation Apps | Task Belum Selesai')): ?>
                                 var  batas_1 = 900000;
                                 var  batas_2 = 1800000;
 
@@ -195,6 +230,41 @@ use app\models\Line;
                                   document.getElementById('row-<?= $i ?>').className = "alert-danger"
                                 }
                               <?php endif; ?>
+                              function deleteTask(){
+                                const swalWithBootstrapButtons = Swal.mixin({
+                                  customClass: {
+                                    confirmButton: 'btn btn-primary ml-2 col-4',
+                                    cancelButton: 'btn btn-secondary mr-2 col-4'
+                                  },
+                                  buttonsStyling: false
+                                })
+
+                                swalWithBootstrapButtons.fire({
+                                  title: 'Apakah Anda yakin?',
+                                  text: "Anda tidak dapat mengembalikan task yang sudah terhapus.",
+                                  icon: 'warning',
+                                  showCancelButton: true,
+                                  confirmButtonText: 'Hapus sekarang',
+                                  cancelButtonText: 'Batal',
+                                  reverseButtons: true,
+                                  allowOutsideClick: false
+                                }).then((result) => {
+                                  if (result.isConfirmed) {
+                                    swalWithBootstrapButtons.fire(
+                                      {
+                                        allowOutsideClick: false,
+                                        title: 'Berhasil!',
+                                        text: "Anda berhasil menghapus task ini.",
+                                        icon: 'success',
+                                      }
+                                    ).then((result) => {
+                                      if (result.isConfirmed) {
+                                          window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/deltask') ?>?id=<?= $taskProblem[$i]->id; ?>';
+                                      }
+                                    })
+                                  }
+                                })
+                              }
                            </script>
                         <?php
                         }
@@ -215,7 +285,7 @@ use app\models\Line;
                           <?= Html::img(Url::to('@web/images/no_data_ongoing.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                         <?php elseif($this->params['title'] == 'Escalation Apps | Task Selesai'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_done.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
-                        <?php elseif($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
+                        <?php elseif($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_undone.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                         <?php elseif($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
                           <?= Html::img(Url::to('@web/images/no_data_recent.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
@@ -267,7 +337,7 @@ use app\models\Line;
                              elseif($task[$i]->status_id == 4){echo "Selesai";}elseif($task[$i]->status_id == 5){echo "Belum Selesai";} ?></th>
                              <?php if($userNow->identity->name == $userFrom->name && $task[$i]->status_id == 1): ?>
                              <th class="pr-4 align-center">
-                                <a href="#"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
+                                <a href="javascript:deleteTask()"><i class="far fa-times-circle fa-sm" style="color: red"></i></i></a>
                                 <a href="<?= Url::base(true);?>/site/detailtask?task_id=<?= $task[$i]->id ?>"><i class="fas fa-eye fa-sm ml-1" style="color: #2F94C3"></i></a>
                              </th>
                              <?php else: ?>
@@ -282,7 +352,7 @@ use app\models\Line;
                                 var startTime = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric',hour12: true });
                                 document.getElementById("startTime-<?= $i ?>").appendChild(document.createTextNode(startTime))
 
-                                <?php if($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
+                                <?php if(($this->params['title'] == 'Escalation Apps | Pengajuan') || ($this->params['title'] == 'Escalation Apps | Task Belum Selesai')): ?>
                                   var  batas_1 = 900000;
                                   var  batas_2 = 1800000;
 
@@ -293,6 +363,41 @@ use app\models\Line;
                                     document.getElementById('row-<?= $i ?>').className = "alert-danger"
                                   }
                                 <?php endif; ?>
+                                function deleteTask(){
+                                  const swalWithBootstrapButtons = Swal.mixin({
+                                    customClass: {
+                                      confirmButton: 'btn btn-primary ml-2 col-4',
+                                      cancelButton: 'btn btn-secondary mr-2 col-4'
+                                    },
+                                    buttonsStyling: false
+                                  })
+
+                                  swalWithBootstrapButtons.fire({
+                                    title: 'Apakah Anda yakin?',
+                                    text: "Anda tidak dapat mengembalikan task yang sudah terhapus.",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Hapus sekarang',
+                                    cancelButtonText: 'Batal',
+                                    reverseButtons: true,
+                                    allowOutsideClick: false
+                                  }).then((result) => {
+                                    if (result.isConfirmed) {
+                                      swalWithBootstrapButtons.fire(
+                                        {
+                                          allowOutsideClick: false,
+                                          title: 'Berhasil!',
+                                          text: "Anda berhasil menghapus task ini.",
+                                          icon: 'success',
+                                        }
+                                      ).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location='<?= Yii::$app->urlManager->createAbsoluteUrl('site/deltask') ?>?id=<?= $taskProblem[$i]->id; ?>';
+                                        }
+                                      })
+                                    }
+                                  })
+                                }
                              </script>
                           <?php
                           }
@@ -313,7 +418,7 @@ use app\models\Line;
                             <?= Html::img(Url::to('@web/images/no_data_ongoing.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                           <?php elseif($this->params['title'] == 'Escalation Apps | Task Selesai'): ?>
                             <?= Html::img(Url::to('@web/images/no_data_done.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
-                          <?php elseif($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
+                          <?php elseif($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
                             <?= Html::img(Url::to('@web/images/no_data_undone.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>
                           <?php elseif($this->params['title'] == 'Escalation Apps | Pengajuan'): ?>
                             <?= Html::img(Url::to('@web/images/no_data_recent.svg'), ['alt' => 'My logo','style'=>'width:calc(20% + 1vw)','class'=>'d-flex ml-auto mr-auto']) ?>

@@ -150,30 +150,30 @@ $this->registerAssetBundle('app\assets\AppAsset');
                           </li>
                           <?php if (in_array(Yii::$app->user->identity->role,[1,2,5])): ?>
                           <li class="nav-item nav-item-link nav-item-margin">
-                              <?php if($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
+                              <?php if($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
                                 <a class="nav-link pl-0 active-tag" href="<?= Url::base(true) ?>/site/taskundone">
                                     <?= Html::img(Url::to('@web/images/unfinish_active.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="active d-none d-md-inline">Task Tidak Selesai</span>
+                                    <span class="active d-none d-md-inline">Task Belum Selesai</span>
                                 </a>
                               <?php else: ?>
                                 <a class="nav-link pl-0" href="<?= Url::base(true) ?>/site/taskundone">
                                     <?= Html::img(Url::to('@web/images/unfinish_passive.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="d-none d-md-inline">Task Tidak Selesai</span>
+                                    <span class="d-none d-md-inline">Task Belum Selesai</span>
                                 </a>
                               <?php endif; ?>
                           </li>
                           <?php endif; ?>
                           <li class="nav-item"><hr style="background-color:#8A9499;margin-top: 5%;"></li>
                           <li class="nav-item nav-item-link nav-item-margin">
-                              <?php if($this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
-                                <a class="nav-link pl-0 active-tag" href="#">
+                              <?php if($this->params['title'] == 'Escalation Apps | Semua Riwayat' || $this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
+                                <a class="nav-link pl-0 active-tag" href="<?= Url::base(true) ?>/site/allhistory">
                                     <?= Html::img(Url::to('@web/images/file_active.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="active d-none d-md-inline">Riwayat Saya</span>
+                                    <span class="active d-none d-md-inline">Riwayat</span>
                                 </a>
                               <?php else: ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true) ?>/site/allhistory">
                                     <?= Html::img(Url::to('@web/images/file_passive.svg'), ['alt' => 'My logo','style'=>'width:calc(3% + 1vw);','class'=>'']) ?>
-                                    <span class="d-none d-md-inline">Riwayat Saya</span>
+                                    <span class="d-none d-md-inline">Riwayat</span>
                                 </a>
                               <?php endif; ?>
                           </li>
@@ -241,8 +241,8 @@ $this->registerAssetBundle('app\assets\AppAsset');
                               <?php endif; ?>
                           </li>
                           <?php if (in_array(Yii::$app->user->identity->role,[1,2,5])): ?>
-                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Task Tidak Selesai">
-                              <?php if($this->params['title'] == 'Escalation Apps | Task Tidak Selesai'): ?>
+                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Task Belum Selesai">
+                              <?php if($this->params['title'] == 'Escalation Apps | Task Belum Selesai'): ?>
                                 <a class="nav-link pl-0" href="<?= Url::base(true) ?>/site/taskundone">
                                     <?= Html::img(Url::to('@web/images/unfinish_active.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
@@ -253,13 +253,13 @@ $this->registerAssetBundle('app\assets\AppAsset');
                               <?php endif; ?>
                           </li>
                           <?php endif; ?>
-                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Riwayat Saya">
-                              <?php if($this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
-                                <a class="nav-link pl-0" href="#">
+                          <li class="nav-item nav-item-link" data-toggle="tooltip" title="Riwayat">
+                              <?php if($this->params['title'] == 'Escalation Apps | Semua Riwayat' || $this->params['title'] == 'Escalation Apps | Riwayat Saya'): ?>
+                                <a class="nav-link pl-0" href="<?= Url::base(true) ?>/site/allhistory">
                                     <?= Html::img(Url::to('@web/images/file_active.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php else: ?>
-                                <a class="nav-link pl-0" href="#">
+                                <a class="nav-link pl-0" href="<?= Url::base(true) ?>/site/allhistory">
                                     <?= Html::img(Url::to('@web/images/file_passive.svg'), ['alt' => 'My logo','width'=>'24','height'=>'24','class'=>'']) ?>
                                 </a>
                               <?php endif; ?>
@@ -483,7 +483,7 @@ channel.bind('acc-task-<?= Yii::$app->user->identity->id ?>',function(data){
 });
 
 channel.bind('conf-task-<?= Yii::$app->user->identity->id ?>',function(data){
-  localStorage.removeItem('countdown-offset');
+  localStorage.removeItem('countdown-offset-'+data.task_id);
   Push.create("Hai, "+document.getElementById('name-user').innerHTML+"!", {
     body: data.name+" telah mengkonfirmasi kedatangan Anda. Silahkan perbaiki masalah yang ada.",
     icon: '/images/small_logo.png',
@@ -504,7 +504,7 @@ channel.bind('conf-task-<?= Yii::$app->user->identity->id ?>',function(data){
 });
 
 channel.bind('done-task-<?= Yii::$app->user->identity->id ?>',function(data){
-  localStorage.removeItem('countdown-offset');
+  localStorage.removeItem('worktime-offset-'+data.task_id);
   Push.create("Hai, "+document.getElementById('name-user').innerHTML+"!", {
     body: data.name+" telah mengkonfirmasi pekerjaan Anda. Silahkan cek detail task.",
     icon: '/images/small_logo.png',
@@ -545,10 +545,8 @@ channel.bind('done-task-<?= Yii::$app->user->identity->id ?>',function(data){
         done_time.setHours(done_time.getHours() + 6);
         var work_time = new Date('<?= $task->work_time ?>');
         work_time.setHours(work_time.getHours() + 6);
-        console.log(done_time-work_time)
         diff = done_time-work_time;
         var batas_sendNotif = 60000;
-        var batas_max = 120000;
         if(diff > batas_sendNotif){
           function sendNotifNow(){
             $.ajax({
@@ -560,20 +558,30 @@ channel.bind('done-task-<?= Yii::$app->user->identity->id ?>',function(data){
             return false;
           }
           sendNotifNow()
-        }else if(diff > batas_max){
+        }
+  <?php
+      }else if($task->done_time != null && $task->status_id == 3 && $task->is_escalated == true){ ?>
+        var done_time = new Date('<?= $task->done_time ?>');
+        done_time.setHours(done_time.getHours() + 6);
+        var work_time = new Date('<?= $task->work_time ?>');
+        work_time.setHours(work_time.getHours() + 6);
+        diff = done_time-work_time;
+        var batas_max = 120000;
+        if(diff > batas_max){
           function sendNotifNow(){
             $.ajax({
               type: "POST",
               url: "<?= Yii::$app->urlManager->createAbsoluteUrl('site/tasktimeout?taskID='.$task->id) ?>",
               success: function() {
+                localStorage.removeItem('worktime-offset');
               }
             });
             return false;
           }
           sendNotifNow()
         }
-  <?php
-       }
+    <?php
+      }
     }
   ?>
 </script>

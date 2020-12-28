@@ -71,7 +71,6 @@ $( document ).ready(function() {
                   url: document.getElementById('notif-url').innerHTML,
                   data: dataString,
                   success: function() {
-
                   }
                 });
                 return false;

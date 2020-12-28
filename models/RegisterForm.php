@@ -118,7 +118,8 @@ class RegisterForm extends Model
           Yii::$app->db->createCommand($sql)->execute();
           Yii::$app->session->setFlash('success', '<b>Pendaftaran line baru berhasil dilakukan.</b>');
           setlocale(LC_ALL, 'id_ID.UTF8', 'id_ID.UTF-8', 'id_ID.8859-1', 'id_ID', 'IND.UTF8', 'IND.UTF-8', 'IND.8859-1', 'IND', 'Indonesian.UTF8', 'Indonesian.UTF-8', 'Indonesian.8859-1', 'Indonesian', 'Indonesia', 'id', 'ID');
-          $sql = "insert into riwayat (aktivitas,user_id,keterangan,created_at,updated_at) values ('Register Akun',".Yii::$app->user->identity->id.",'Melakukan pendaftaran akun baru bernama ".$this->namaLengkap.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."');";
+          $sql = "insert into riwayat (aktivitas,user_id,keterangan,created_at,updated_at) values ('Register Line',".Yii::$app->user->identity->id.",'Melakukan pendaftaran line baru bernama ".$this->namaLengkap.".','".strftime("%Y-%m-%d %T")."','".strftime("%Y-%m-%d %T")."');";
+          Yii::$app->db->createCommand($sql)->execute();
           Yii::$app->controller->redirect('line');
         }
     }
