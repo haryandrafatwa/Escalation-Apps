@@ -24,8 +24,9 @@ $this->registerAssetBundle('app\assets\DashboardAsset');
         <?php endif; ?>
         <?php $unFinish = Task::find()->where(['status_id' => 5])->all(); if(count($unFinish) > 0 && Yii::$app->user->identity->role == 2):?>
           <div class="row">
-            <div class="alert alert-danger fade show col-12" role="alert">
-              Terdapat <?= count($unFinish); ?> task yang belum selesai. Segera periksa task tersebut!
+            <div class="alert alert-danger fade show col-12  d-flex justify-content-between" role="alert">
+              <span>Terdapat <?= count($unFinish); ?> task yang belum selesai. Segera periksa task tersebut!</span>
+              <a style="color:#721c24" href="<?= Url::base(true);?>/site/taskundone"><b>Cek Sekarang</b></a>
             </div>
           </div>
         <?php endif; ?>

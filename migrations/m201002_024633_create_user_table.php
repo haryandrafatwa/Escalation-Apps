@@ -253,37 +253,37 @@ class m201002_024633_create_user_table extends Migration
         'updated_at' => 1604923983,
       ]);
 
-      $this->insert('{{%user}}', [
-        'username' => 'haryandra.fatwa',
-        'name' => 'Haryandra Fatwa',
-        'nip' => '1301174007',
-        'password_hash' => '$2y$13$nbYUFajx0eE3r5dS/IZvn.tqXKe4zsUaVJLPOBsbEcxTkRNwuDtjK',
-        'role' => 2,
-        'images_id' => 1,
-        'tgl_lahir' => '1999-05-28',
-        'status' =>10,
-        'is_online' => False,
-        'auth_key' => '11c4MbJA0vzybc8g1WGkE37BzT515iQ0',
-        'verification_token' => '9noSY3fpro7vYJQIY_Ss5ckUPUf4OcUq_1604992727',
-        'created_at' => 1604923983,
-        'updated_at' => 1604923983,
-      ]);
-
-      $this->insert('{{%user}}', [
-        'username' => 'blp.01',
-        'name' => 'BLP 01',
-        'nip' => NULL,
-        'password_hash' => '$2y$13$.ZsYkbs7Eka7eF7v1uADLuk.eUV0XLdqo3liodfwanGfvruxyTogK',
-        'role' => 1,
-        'images_id' => 1,
-        'tgl_lahir' => NULL,
-        'status' =>10,
-        'is_online' => False,
-        'auth_key' => 'T8fWy66vSgqW3iYV2By9BpvUH99B8zLT',
-        'verification_token' => 'PkTOvgTFPAZnD1mjyWz3rYOvAzddq8H1_1604992760',
-        'created_at' => 1604923983,
-        'updated_at' => 1604923983,
-      ]);
+      // $this->insert('{{%user}}', [
+      //   'username' => 'haryandra.fatwa',
+      //   'name' => 'Haryandra Fatwa',
+      //   'nip' => '1301174007',
+      //   'password_hash' => '$2y$13$nbYUFajx0eE3r5dS/IZvn.tqXKe4zsUaVJLPOBsbEcxTkRNwuDtjK',
+      //   'role' => 2,
+      //   'images_id' => 1,
+      //   'tgl_lahir' => '1999-05-28',
+      //   'status' =>10,
+      //   'is_online' => False,
+      //   'auth_key' => '11c4MbJA0vzybc8g1WGkE37BzT515iQ0',
+      //   'verification_token' => '9noSY3fpro7vYJQIY_Ss5ckUPUf4OcUq_1604992727',
+      //   'created_at' => 1604923983,
+      //   'updated_at' => 1604923983,
+      // ]);
+      //
+      // $this->insert('{{%user}}', [
+      //   'username' => 'blp.01',
+      //   'name' => 'BLP 01',
+      //   'nip' => NULL,
+      //   'password_hash' => '$2y$13$.ZsYkbs7Eka7eF7v1uADLuk.eUV0XLdqo3liodfwanGfvruxyTogK',
+      //   'role' => 1,
+      //   'images_id' => 1,
+      //   'tgl_lahir' => NULL,
+      //   'status' =>10,
+      //   'is_online' => False,
+      //   'auth_key' => 'T8fWy66vSgqW3iYV2By9BpvUH99B8zLT',
+      //   'verification_token' => 'PkTOvgTFPAZnD1mjyWz3rYOvAzddq8H1_1604992760',
+      //   'created_at' => 1604923983,
+      //   'updated_at' => 1604923983,
+      // ]);
 
       // $this->insert('{{%user}}', [
       //   'id' => 5,
